@@ -15,7 +15,7 @@ class LoginController extends Controller
     public function actionLogin()
     {
         $userId = RequestHelper::fIntG('userId');
-        $userInfo = UserRedis::instance()->getUserInfoById($userId);
+        $userInfo = UserService::instance()->getUserInfoById($userId);
         var_dump($userInfo);die;
     }
 }
