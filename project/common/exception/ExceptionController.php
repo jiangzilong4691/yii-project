@@ -24,11 +24,10 @@ class ExceptionController extends Controller
     {
         $exception = \Yii::$app->getErrorHandler()->exception;
         //暂时只排除 404
-        /*if(!$exception instanceof NotFoundHttpException)
+        if(!$exception instanceof NotFoundHttpException)
         {
             ExceptionService::instance()->recordException($exception);
-        }*/
-        ExceptionService::instance()->recordException($exception);
+        }
         if(YII_DEBUG)
         {
             $this->msgToClient = $exception->getMessage();
