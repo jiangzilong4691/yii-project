@@ -4,18 +4,35 @@
 namespace frontend\controllers;
 
 
+use common\components\helpers\CurlHelper;
 use common\components\helpers\RequestHelper;
-use common\redis\TestRedis;
-use common\redis\UserRedis;
 use common\service\UserService;
-use yii\web\Controller;
 
-class LoginController extends Controller
+class LoginController extends BaseController
 {
     public function actionLogin()
     {
         $userId = RequestHelper::fIntG('userId');
         $userInfo = UserService::instance()->getUserInfoById($userId);
-        var_dump($userInfo);die;
+        $data = [
+            'code' => '200',
+            'msg' => 'success',
+            'info' =>[
+                'useInfo' => $userInfo
+            ]
+        ];
+        return $this->apiData($data);
+    }
+
+    public function actionCurl()
+    {
+        $info = CurlHelper::get('http://rest.zhibo.tv/room/get-room-info');
+        $data = json_decode($info['data'],true);
+        return $this->apiData($data);
+    }
+
+    public function actionTest()
+    {
+        var_dump($_COOKIE);die;
     }
 }

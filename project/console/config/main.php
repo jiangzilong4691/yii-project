@@ -15,12 +15,6 @@ return [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
-    'controllerMap' => [
-        'fixture' => [
-            'class' => 'yii\console\controllers\FixtureController',
-            'namespace' => 'common\fixtures',
-          ],
-    ],
     'components' => [
         'log' => [
             'targets' => [
@@ -30,6 +24,9 @@ return [
                 ],
             ],
         ],
+    ],
+    'errorHandler' => [
+        'class' => 'console\controllers\ErrorHandler'
     ],
     'params' => $params,
 ];

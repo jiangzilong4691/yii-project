@@ -5,7 +5,6 @@ namespace common\service;
 
 
 use common\base\BaseService;
-use phpDocumentor\Reflection\Types\Array_;
 
 class MailService extends BaseService
 {
@@ -28,6 +27,12 @@ class MailService extends BaseService
     private $customLayout;
 
     /**
+     * 自定义邮件发送方
+     * @var
+     */
+    private $customMailerFrom = [];
+
+    /**
      * 内置模板路径
      * @var string
      */
@@ -46,7 +51,7 @@ class MailService extends BaseService
     private $senderName = '中国体育';
 
     /**
-     * 发送邮件账号
+     * 发送邮件账号 应走后台配置
      * @var array
      */
     private $_mailerFrom = [
@@ -140,6 +145,13 @@ class MailService extends BaseService
         if($this->customLayout !== null)
         {
             $this->_mailer->htmlLayout = $this->customLayout;
+        }
+
+        //设置自定义发送方
+        if(is_array($this->customMailerFrom) && !empty($this->customMailerFrom))
+        {
+            $this->_mailerFrom = $this->customMailerFrom;
+            $this->_mailer->transport = $this->_getTransport();
         }
     }
 

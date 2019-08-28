@@ -78,7 +78,7 @@ class CurlHelper extends BaseHelper
         if(self::checkHttps($url))
         {
             curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);
-            curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
+            curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
         }
 
         if(!empty($data))

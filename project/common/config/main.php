@@ -15,7 +15,7 @@ return [
                     'hostname' => '192.168.2.13',
                     'port' => 6379,
                     'database' => 0,
-                    'password' => '3e2e1c913d27b3a4f45e3b275a01c84b26fb29'
+                    'password' => ''
                 ],
                 'keyPrefix' => 'cache:',
             ],
@@ -38,7 +38,7 @@ return [
                     'hostname' => '192.168.2.13',
                     'port' => 6379,
                     'database' => 1,
-                    'password' => '3e2e1c913d27b3a4f45e3b275a01c84b26fb29'
+                    'password' => ''
                 ],
                 'keyPrefix'=>'zb_session:',
             ],
@@ -48,28 +48,28 @@ return [
                 'charset' => 'utf8',
                 'tablePrefix' => 'b8_',
                 'username' => 'program_user',
-                'password' => '0SYwCNjGPeM!$qns',
-                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=bo8tv',
+                'password' => '',
+                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=',
                 'serverRetryInterval' => 60,
             ],
         'vipDb' =>
             [
                 'class' => 'yii\db\Connection',
-                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=vip',
+                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=',
                 'username' => 'program_user',
-                'password' => '0SYwCNjGPeM!$qns',
+                'password' => '',
                 'charset' => 'utf8',
                 'tablePrefix' => 'b8_',
             ],
         'pollDb' =>
             [
                 'class' => 'yii\db\Connection',
-                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=b8_poll',
+                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=',
                 'charset' => 'utf8',
                 'tablePrefix' => 'b8_',
                 'serverRetryInterval' => 10,
                 'username' => 'program_user',
-                'password' => '0SYwCNjGPeM!$qns',
+                'password' => '',
             ],
         //路由管理
         'urlManager' =>
