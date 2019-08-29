@@ -24,9 +24,9 @@ return [
                 ],
             ],
         ],
-    ],
-    'errorHandler' => [
-        'class' => 'console\controllers\ErrorHandler'
+        'errorHandler' => [
+            'class' => 'console\controllers\ErrorHandler'
+        ],
     ],
     'params' => $params,
 ];

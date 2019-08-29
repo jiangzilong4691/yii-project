@@ -84,7 +84,7 @@ return [
         //异常处理
         'errorHandler' =>
             [
-                'errorAction' => 'site/error'
+
             ]
     ],
 ];
