@@ -21,14 +21,14 @@ class LoginController extends BaseController
                 'useInfo' => $userInfo
             ]
         ];
-        return $this->apiData($data);
+        return $this->apiDataOut($data);
     }
 
     public function actionCurl()
     {
         $info = CurlHelper::get('http://rest.zhibo.tv/room/get-room-info');
         $data = json_decode($info['data'],true);
-        return $this->apiData($data);
+        return $this->apiDataOut($data);
     }
 
     public function actionTest()
