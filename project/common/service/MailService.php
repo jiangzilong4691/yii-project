@@ -55,16 +55,7 @@ class MailService extends BaseService
      * @var array
      */
     private $_mailerFrom = [
-        'repasswd@zhibo.tv',
-        'repasswd_02@zhibo.tv',
-        'repasswd_03@zhibo.tv',
-        'repasswd_04@zhibo.tv',
-        'repasswd_05@zhibo.tv',
-        'repasswd_06@zhibo.tv',
-        'repasswd_07@zhibo.tv',
-        'repasswd_08@zhibo.tv',
-        'repasswd_09@zhibo.tv',
-        'repasswd_10@zhibo.tv',
+        
     ];
 
     /**
@@ -73,9 +64,9 @@ class MailService extends BaseService
      */
     private $_transport = [
         'class' => 'Swift_SmtpTransport',
-        'host' => 'smtp.exmail.qq.com',
-        'username' => 'repasswd@zhibo.tv',
-        'password' => 'coolyou2015',
+        'host' => '',
+        'username' => '',
+        'password' => '',
         'port' => '465',
         'encryption' => 'ssl'
     ];
