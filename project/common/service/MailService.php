@@ -55,7 +55,7 @@ class MailService extends BaseService
      * @var array
      */
     private $_mailerFrom = [
-        
+
     ];
 
     /**
