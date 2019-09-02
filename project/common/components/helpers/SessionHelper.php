@@ -62,6 +62,10 @@ class SessionHelper extends BaseHelper
     /**
      * SESSION  清理
      * @param string $key      Key,不传会清空服务器SESSION
+     * @return mixed|void
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2019/9/2
+     * @Time: 10:29
      */
     public static function del($key=null)
     {
