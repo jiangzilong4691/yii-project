@@ -52,7 +52,7 @@ class CurlHelper extends BaseHelper
             curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
         }
 
-        curl_setopt($ch,CURLOPT_TIMEOUT,$timeOut);
+        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeOut);
 
         return self::curlReturn($ch);
     }
@@ -86,7 +86,7 @@ class CurlHelper extends BaseHelper
             curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
         }
 
-        curl_setopt($ch,CURLOPT_TIMEOUT,$timeOut);
+        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeOut);
 
         return self::curlReturn($ch);
     }
