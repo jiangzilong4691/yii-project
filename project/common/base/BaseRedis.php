@@ -150,6 +150,11 @@ abstract class BaseRedis extends BaseService
         if($this->slaveConn == null)
         {
             $slaveConfig = $this->getSlaveConfig();
+            if(empty($slaveConfig))
+            {
+                //从库未配置 选取主库
+                return $this->master($db);
+            }
             $this->slaveConn = $this->getConnInstance($slaveConfig,'slave');
         }
         if($this->slaveConn instanceof \Redis)
