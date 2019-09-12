@@ -84,7 +84,7 @@ class AliWebPay extends AliPay
             $response = $aop->pageExecute($request,$this->method);
 
             return [
-                'orderInfo' => $response
+                'result' => $response
             ];
         }catch (\Exception $e){
             throw $e;

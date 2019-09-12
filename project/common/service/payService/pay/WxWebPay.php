@@ -77,7 +77,7 @@ class WxWebPay extends WxPay
                 {
                     //返回二维码生成地址
                     return [
-                        'qrcode' => REST_URL.'/qrcode/out?'."img=".json_encode(['imgUrl'=>$unifiedOrderResutl['code_url']]),
+                        'result' => REST_URL.'/qrcode/out?'."img=".json_encode(['imgUrl'=>$unifiedOrderResutl['code_url']]),
                     ];
                 }
                 else

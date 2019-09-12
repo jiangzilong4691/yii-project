@@ -68,7 +68,7 @@ class AliAppPay extends AliPay
             $response = $aop->sdkExecute($request);
 
             return [
-                'orderInfo' => $response
+                'result' => $response
             ];
         }catch (\Exception $e){
             throw $e;

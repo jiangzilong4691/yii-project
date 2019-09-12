@@ -76,7 +76,7 @@ class WxGzPay extends WxPay
                     //获取jsapi支付参数
                     $jsApiParameters = (new JsApiPay())->GetJsApiParameters($unifiedOrderResutl);
                     return [
-                        'jsApiParameters' => $jsApiParameters
+                        'result' => $jsApiParameters
                     ];
                 }
                 else

@@ -87,7 +87,7 @@ class WxAppPay extends WxPay
                 ];
                 //二次签名
                 $data2App['sign'] = $this->getSign($data2App);
-                return $data2App;
+                return ['result' => $data2App];
             }
             //统一下单异常
             throw new WxPayException($orderReturn['return_msg']);
