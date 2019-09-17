@@ -28,6 +28,7 @@ class MailService extends BaseService
 
     /**
      * 自定义邮件发送方
+     * e.g. ['repasswd@zhibo.tv' => 'c9ACEWWzaDh5tTav'] ['账号'=>'密码']
      * @var
      */
     private $customMailerFrom = [];
@@ -54,15 +55,37 @@ class MailService extends BaseService
      * 发送邮件账号 应走后台配置
      * @var array
      */
-    private $_mailerFrom = [
+    /*protected $mailerFrom = [
+        'repasswd@zhibo.tv',
+        'repasswd_02@zhibo.tv',
+        'repasswd_03@zhibo.tv',
+        'repasswd_04@zhibo.tv',
+        'repasswd_05@zhibo.tv',
+        'repasswd_06@zhibo.tv',
+        'repasswd_07@zhibo.tv',
+        'repasswd_08@zhibo.tv',
+        'repasswd_09@zhibo.tv',
+        'repasswd_10@zhibo.tv',
+    ];*/
 
+    /**
+     * 发送邮件账号=>密码
+     * @var array
+     */
+    protected $mailerFromPwdMap = [
+        'repasswd@zhibo.tv'     => '11111',
+        'repasswd_02@zhibo.tv'  => '1111',
+        'repasswd_03@zhibo.tv'  => '1111',
+        'repasswd_04@zhibo.tv'  => '1111',
+        'repasswd_05@zhibo.tv'  => '11111',
     ];
+
 
     /**
      * SMTP 参数
      * @var array
      */
-    private $_transport = [
+    protected $transport = [
         'class' => 'Swift_SmtpTransport',
         'host' => '',
         'username' => '',
@@ -78,12 +101,29 @@ class MailService extends BaseService
      * @Date: 2019/7/31
      * @Time: 16:49
      */
-    private function getRandMailerFrom()
+    protected function getRandMailerFrom()
     {
-        shuffle($this->_mailerFrom);
-        $sendFrom = $this->_mailerFrom[0];
+        $mailFrom = array_keys($this->mailerFromPwdMap);
+        shuffle($mailFrom);
+        $sendFrom = $mailFrom[0];
         $this->sendFrom = $sendFrom;
         return $sendFrom;
+    }
+
+    /**
+     * 发送方邮件密码
+     * @return mixed|string
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2019/9/17
+     * @Time: 11:38
+     */
+    protected function getSendMailerPwd()
+    {
+        if (isset($this->mailerFromPwdMap[$this->sendFrom]))
+        {
+            return $this->mailerFromPwdMap[$this->sendFrom];
+        }
+        return '';
     }
 
     /**
@@ -93,10 +133,11 @@ class MailService extends BaseService
      * @Date: 2019/7/31
      * @Time: 18:24
      */
-    private function _getTransport()
+    protected function getTransport()
     {
-        $this->_transport['username'] = $this->getRandMailerFrom();
-        return $this->_transport;
+        $this->transport['username'] = $this->getRandMailerFrom();
+        $this->transport['password'] = $this->getSendMailerPwd();
+        return $this->transport;
     }
 
     /**
@@ -113,7 +154,7 @@ class MailService extends BaseService
         $this->_mailer->viewPath = $this->viewPath;
         //默认关闭模板布局
         $this->_mailer->htmlLayout = false;
-        $this->_mailer->transport = $this->_getTransport();
+        $this->_mailer->transport = $this->getTransport();
         $this->_mailer->messageConfig = [
             'charset' => 'UTF-8'
         ];
@@ -141,8 +182,8 @@ class MailService extends BaseService
         //设置自定义发送方
         if(is_array($this->customMailerFrom) && !empty($this->customMailerFrom))
         {
-            $this->_mailerFrom = $this->customMailerFrom;
-            $this->_mailer->transport = $this->_getTransport();
+            $this->mailerFromPwdMap = $this->customMailerFrom;
+            $this->_mailer->transport = $this->getTransport();
         }
     }
 
@@ -210,10 +251,10 @@ class MailService extends BaseService
             foreach ($mailTos as $receiver)
             {
                 $messages[] = $this->_mailer->compose()
-                                ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
-                                ->setTo($receiver)
-                                ->setSubject($subject)
-                                ->setHtmlBody($body);
+                    ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
+                    ->setTo($receiver)
+                    ->setSubject($subject)
+                    ->setHtmlBody($body);
             }
             return $this->_mailer->sendMultiple($messages);
         }
@@ -235,10 +276,10 @@ class MailService extends BaseService
     public function tplSend($mailTo,$subject,$tplName,Array $tplParams=[],$sender='')
     {
         return $this->_mailer->compose($tplName,$tplParams)
-                            ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
-                            ->setTo($mailTo)
-                            ->setSubject($subject)
-                            ->send();
+            ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
+            ->setTo($mailTo)
+            ->setSubject($subject)
+            ->send();
     }
 
     /**
@@ -261,9 +302,9 @@ class MailService extends BaseService
             foreach ($mailTos as $receiver)
             {
                 $messages[] = $this->_mailer->compose($tplName,$tplParams)
-                                ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
-                                ->setTo($receiver)
-                                ->setSubject($subject);
+                    ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
+                    ->setTo($receiver)
+                    ->setSubject($subject);
             }
             return $this->_mailer->sendMultiple($messages);
         }
