@@ -67,7 +67,7 @@ class CurlHelper extends BaseHelper
      * @Date: 2019/7/24
      * @Time: 16:42
      */
-    public static function post($url,$data=[],$timeOut=30)
+    public static function post($url,$data=[],$postJson=false,$timeOut=30)
     {
         $ch = curl_init();
         curl_setopt($ch,CURLOPT_URL,$url);
@@ -83,6 +83,10 @@ class CurlHelper extends BaseHelper
 
         if(!empty($data))
         {
+            if($postJson)
+            {
+                $data = json_encode($data);
+            }
             curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
         }
 
