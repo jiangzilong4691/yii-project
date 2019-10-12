@@ -11,6 +11,7 @@ use common\base\BaseHelper;
  */
 class SessionHelper extends BaseHelper
 {
+
     /**
      * 获取session实例
      * @return \yii\web\Session
@@ -65,7 +66,7 @@ class SessionHelper extends BaseHelper
      * @return mixed|void
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/9/2
-     * @Time: 10:29
+     * @Time: 10:28
      */
     public static function del($key=null)
     {

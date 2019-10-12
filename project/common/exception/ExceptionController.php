@@ -22,7 +22,10 @@ class ExceptionController extends Controller
      */
     public function beforeAction($action)
     {
+        return true;
         $exception = \Yii::$app->getErrorHandler()->exception;
+
+        ExceptionService::instance()->recordException($exception);
         //暂时只排除 404
         if(!$exception instanceof NotFoundHttpException)
         {

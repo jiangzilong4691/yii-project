@@ -12,10 +12,10 @@ return [
             [
                 'class' => 'yii\redis\Cache',
                 'redis' => [
-                    'hostname' => '192.168.2.13',
+                    'hostname' => '49.234.97.237',
                     'port' => 6379,
                     'database' => 0,
-                    'password' => ''
+                    'password' => 'r64E*U9XEcd!dL8L'
                 ],
                 'keyPrefix' => 'cache:',
             ],
@@ -27,7 +27,7 @@ return [
                     'hostname' => '127.0.0.1',
                     'port' => 6379,
                     'database' => 0,
-                    'password' => '12345'
+                    'password' => 'r64E*U9XEcd!dL8L'
                 ],
                 'keyPrefix' => 'cache:',
             ],
@@ -35,10 +35,10 @@ return [
             [
                 'class' => 'common\base\RedisSession',
                 'redis' => [
-                    'hostname' => '192.168.2.13',
+                    'hostname' => '49.234.97.237',
                     'port' => 6379,
                     'database' => 1,
-                    'password' => ''
+                    'password' => '49.234.97.237'
                 ],
                 'keyPrefix'=>'zb_session:',
             ],
@@ -48,28 +48,30 @@ return [
                 'charset' => 'utf8',
                 'tablePrefix' => 'b8_',
                 'username' => 'program_user',
-                'password' => '',
-                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=',
-                'serverRetryInterval' => 60,
+                'password' => '0SYwCNjGPeM!$qns',
+                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=bo8tv',
+                'attributes' => [
+                    PDO::ATTR_TIMEOUT => 10
+                 ]
             ],
         'vipDb' =>
             [
                 'class' => 'yii\db\Connection',
-                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=',
+                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=vip',
                 'username' => 'program_user',
-                'password' => '',
+                'password' => '0SYwCNjGPeM!$qns',
                 'charset' => 'utf8',
                 'tablePrefix' => 'b8_',
             ],
         'pollDb' =>
             [
                 'class' => 'yii\db\Connection',
-                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=',
+                'dsn' => 'mysql:host=192.168.20.5;port=3306;dbname=b8_poll',
                 'charset' => 'utf8',
                 'tablePrefix' => 'b8_',
                 'serverRetryInterval' => 10,
                 'username' => 'program_user',
-                'password' => '',
+                'password' => '0SYwCNjGPeM!$qns',
             ],
         //路由管理
         'urlManager' =>

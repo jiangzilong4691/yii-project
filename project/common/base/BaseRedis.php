@@ -88,7 +88,7 @@ abstract class BaseRedis extends BaseService
                     //当前配置实例化静态存储
                     self::$_redisConnPool[$connCacheKey] = $redis;
                 }
-            else
+                else
                 {
                     throw new RedisException('redis【'.$role.'】'.$config['host'].':'.$config['port'].' 连接失败');
                 }

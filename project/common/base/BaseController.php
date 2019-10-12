@@ -16,8 +16,12 @@ class BaseController extends Controller
      * @Date: 2019/8/5
      * @Time: 15:17
      */
-    protected function apiDataOut($returnInfo)
+    protected function apiData($returnInfo=[],$code = '200',$msg = 'success')
     {
-        return $this->asJson($returnInfo);
+        return $this->asJson([
+            'code' => $code,
+            'msg' => $msg,
+            'data' => $returnInfo
+        ]);
     }
 }

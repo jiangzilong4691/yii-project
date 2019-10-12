@@ -2,6 +2,7 @@
 namespace common\redis;
 
 use common\base\BaseRedis;
+use common\base\redisSentinel\SentinelPool;
 use common\components\helpers\CacheHelper;
 use common\components\helpers\ComHelper;
 
@@ -16,7 +17,29 @@ class UserRedis extends BaseRedis
      */
     protected function getConfig()
     {
-        return \Yii::$app->params['redis']['user'];
+        //return \Yii::$app->params['redis']['user'];
+        $config = [
+            'zilong' => [
+                'masterName' => 'zilong',
+                'redisConfig' => [
+                    'password' => 'r64E*U9XEcd!dL8L',
+                    'timeout'  => 10
+                ],
+                'group' => [
+                    ['host'=>'49.234.97.237','port'=>'26379'],
+                    ['host'=>'49.234.97.237','port'=>'26380'],
+                    ['host'=>'49.234.97.237','port'=>'26381'],
+                ]
+            ]
+        ];
+        $masterConfig = SentinelPool::instance($config['zilong'])->getMasterConfig();
+        $slaveConfig = SentinelPool::instance($config['zilong'])->getSlavesConfig();
+        return [
+            'master' => $masterConfig,
+            'slaves' => [
+                $slaveConfig
+            ]
+        ];
     }
 
     // 0 库

@@ -39,7 +39,7 @@ class ExceptionService extends BaseService
                     'message' => $exception->getMessage(),
                     'trace' => $exception->getTraceAsString()
                 ],'中国体育');
-            }catch (\Exception $e){
+            }catch (\Exception $exception){
                 ExceptionErrorLogEntity::model()->recordError($exception->getCode(),$exception->getFile(),$exception->getLine(),$exception->getMessage(),$exception->getTraceAsString(),$appId,$serverInfo);
             }
         }

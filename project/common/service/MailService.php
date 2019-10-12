@@ -73,11 +73,11 @@ class MailService extends BaseService
      * @var array
      */
     protected $mailerFromPwdMap = [
-        'repasswd@zhibo.tv'     => '11111',
-        'repasswd_02@zhibo.tv'  => '1111',
-        'repasswd_03@zhibo.tv'  => '1111',
-        'repasswd_04@zhibo.tv'  => '1111',
-        'repasswd_05@zhibo.tv'  => '11111',
+        'repasswd@zhibo.tv'     => 'c9ACEWWzaDh5tTav',
+        'repasswd_02@zhibo.tv'  => 'uVeeAe8Zm96YqxEd',
+        'repasswd_03@zhibo.tv'  => 'HK94Jo3obyCd6fhM',
+        'repasswd_04@zhibo.tv'  => 'LCWvjHCgNGEPyhsp',
+        'repasswd_05@zhibo.tv'  => 'sjFo2tmdb9ghH5Bw',
     ];
 
 
@@ -87,9 +87,9 @@ class MailService extends BaseService
      */
     protected $transport = [
         'class' => 'Swift_SmtpTransport',
-        'host' => '',
-        'username' => '',
-        'password' => '',
+        'host' => 'smtp.exmail.qq.com',
+        'username' => 'repasswd@zhibo.tv',
+        'password' => 'coolyou2015',
         'port' => '465',
         'encryption' => 'ssl'
     ];
@@ -251,10 +251,10 @@ class MailService extends BaseService
             foreach ($mailTos as $receiver)
             {
                 $messages[] = $this->_mailer->compose()
-                    ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
-                    ->setTo($receiver)
-                    ->setSubject($subject)
-                    ->setHtmlBody($body);
+                                ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
+                                ->setTo($receiver)
+                                ->setSubject($subject)
+                                ->setHtmlBody($body);
             }
             return $this->_mailer->sendMultiple($messages);
         }
@@ -276,10 +276,10 @@ class MailService extends BaseService
     public function tplSend($mailTo,$subject,$tplName,Array $tplParams=[],$sender='')
     {
         return $this->_mailer->compose($tplName,$tplParams)
-            ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
-            ->setTo($mailTo)
-            ->setSubject($subject)
-            ->send();
+                            ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
+                            ->setTo($mailTo)
+                            ->setSubject($subject)
+                            ->send();
     }
 
     /**
@@ -302,9 +302,9 @@ class MailService extends BaseService
             foreach ($mailTos as $receiver)
             {
                 $messages[] = $this->_mailer->compose($tplName,$tplParams)
-                    ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
-                    ->setTo($receiver)
-                    ->setSubject($subject);
+                                ->setFrom([$this->sendFrom=>empty($sender)?$this->senderName:$sender])
+                                ->setTo($receiver)
+                                ->setSubject($subject);
             }
             return $this->_mailer->sendMultiple($messages);
         }

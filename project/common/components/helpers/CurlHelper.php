@@ -85,10 +85,14 @@ class CurlHelper extends BaseHelper
         {
             if($postJson)
             {
-                $data = json_encode($data);
+                $jsonData = json_encode($data);
                 curl_setopt($ch,CURLOPT_HTTPHEADER,['Content-type:application/json']);
+                curl_setopt($ch,CURLOPT_POSTFIELDS,$jsonData);
             }
-            curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+            else
+            {
+                curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+            }
         }
 
         curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeOut);

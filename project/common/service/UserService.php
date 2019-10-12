@@ -25,7 +25,12 @@ class UserService extends BaseService
             $userInfo = UserRedis::instance()->getUserInfoById($userId);
             if(empty($userInfo))
             {
-                $userInfo = UserEntity::model()->getUserInfoByUserIdNotSens($userId);
+//                $userInfo = UserEntity::model()->getUserInfoByUserIdNotSens($userId);
+                $userInfo = [
+                    'userId' => '1497428',
+                    'userName' => 'zilong',
+                    'nickname' => 'hahaha'
+                ];
                 if(!empty($userInfo))
                 {
                     UserRedis::instance()->setUserInfoById($userInfo);
