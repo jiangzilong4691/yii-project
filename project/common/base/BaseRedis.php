@@ -84,11 +84,11 @@ abstract class BaseRedis extends BaseService
                         {
                             throw new RedisException('redis【'.$role.'】'.$config['host'].':'.$config['port'].' 密码错误');
                         }
-                        //当前配置实例化静态存储
-                        self::$_redisConnPool[$connCacheKey] = $redis;
                     }
+                    //当前配置实例化静态存储
+                    self::$_redisConnPool[$connCacheKey] = $redis;
                 }
-                else
+            else
                 {
                     throw new RedisException('redis【'.$role.'】'.$config['host'].':'.$config['port'].' 连接失败');
                 }
