@@ -73,11 +73,11 @@ class MailService extends BaseService
      * @var array
      */
     protected $mailerFromPwdMap = [
-        'repasswd@zhibo.tv'     => 'c9ACEWWzaDh5tTav',
-        'repasswd_02@zhibo.tv'  => 'uVeeAe8Zm96YqxEd',
-        'repasswd_03@zhibo.tv'  => 'HK94Jo3obyCd6fhM',
-        'repasswd_04@zhibo.tv'  => 'LCWvjHCgNGEPyhsp',
-        'repasswd_05@zhibo.tv'  => 'sjFo2tmdb9ghH5Bw',
+        'repasswd@zhibo.tv'     => '111111',
+        'repasswd_02@zhibo.tv'  => '111111',
+        'repasswd_03@zhibo.tv'  => '111111',
+        'repasswd_04@zhibo.tv'  => '111111',
+        'repasswd_05@zhibo.tv'  => '111111',
     ];
 
 
@@ -89,7 +89,7 @@ class MailService extends BaseService
         'class' => 'Swift_SmtpTransport',
         'host' => 'smtp.exmail.qq.com',
         'username' => 'repasswd@zhibo.tv',
-        'password' => 'coolyou2015',
+        'password' => '11111111',
         'port' => '465',
         'encryption' => 'ssl'
     ];
