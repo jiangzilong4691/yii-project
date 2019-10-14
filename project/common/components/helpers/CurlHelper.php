@@ -31,15 +31,16 @@ class CurlHelper extends BaseHelper
     }
 
     /**
-     * curl get 请求
-     * @param   string      $url        请求url
-     * @param   int         $timeOut    请求超时时间
+     * CURL get请求
+     * @param   string      $url            请求地址
+     * @param   int         $connTimeOut    尝试连接超时时间
+     * @param   int         $execTimeout    执行超时时间
      * @return array
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
-     * @Date: 2019/7/24
-     * @Time: 16:15
+     * @Date: 2019/10/14
+     * @Time: 10:43
      */
-    public static function get($url,$timeOut=30)
+    public static function get($url,$connTimeOut=30,$execTimeout=60)
     {
         $ch = curl_init();
         curl_setopt($ch,CURLOPT_URL,$url);
@@ -52,22 +53,26 @@ class CurlHelper extends BaseHelper
             curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
         }
 
-        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeOut);
+        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$connTimeOut);
+        curl_setopt($ch,CURLOPT_TIMEOUT,$execTimeout);
 
         return self::curlReturn($ch);
     }
 
     /**
      * curl post 请求
-     * @param   string      $url    请求地址
-     * @param   array       $data   请求参数 e.g. : ['name'=>'tom','age'=>19]
-     * @param int $timeOut
+     * @param   string      $url            请求地址
+     * @param   array       $data           请求参数 e.g. : ['name'=>'tom','age'=>19]
+     * @param   bool        $postJson       是否发送json请求数据
+     * @param   array       $custome        自定义参数信息 e.g. : ['header'=>['Content-type:application/json'],'special'=>'']
+     * @param   int         $connTimeout    尝试连接超时时间
+     * @param   int         $execTimeout    执行超时时间
      * @return array
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/24
      * @Time: 16:42
      */
-    public static function post($url,$data=[],$postJson=false,$timeOut=30)
+    public static function post($url,$data=[],$postJson=false,$custome=[],$connTimeout=30,$execTimeout=60)
     {
         $ch = curl_init();
         curl_setopt($ch,CURLOPT_URL,$url);
@@ -77,8 +82,16 @@ class CurlHelper extends BaseHelper
         //https请求关闭证书校验
         if(self::checkHttps($url))
         {
+            //禁止curl验证对等证书
             curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);
+            //禁止校验公用名
             curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
+        }
+
+        //设置请求头
+        if(isset($custome['header']) && !empty($custome['header']))
+        {
+            curl_setopt($ch,CURLOPT_HTTPHEADER,$custome['header']);
         }
 
         if(!empty($data))
@@ -91,7 +104,8 @@ class CurlHelper extends BaseHelper
             curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
         }
 
-        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeOut);
+        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$connTimeout);
+        curl_setopt($ch,CURLOPT_TIMEOUT,$execTimeout);
 
         return self::curlReturn($ch);
     }
