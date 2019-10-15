@@ -126,7 +126,7 @@ class CurlHelper extends BaseHelper
             $return = [
                 'code' => '200',
                 'msg' => 'success',
-                'data' => $result
+                'rpData' => $result
             ];
         }
         else
@@ -134,7 +134,7 @@ class CurlHelper extends BaseHelper
             $return = [
                 'code' => '-1',
                 'msg' => curl_error($ch),
-                'data' => ''
+                'rpData' => ''
             ];
         }
         curl_close($ch);
