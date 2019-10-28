@@ -26,7 +26,9 @@ class BaseService
     /**
      * 单例对象池获取实例
      * 注：一定要注释 return static 不然IDE无法定位子类实例 无法自动提示
+     *
      * @return static
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/25
      * @Time: 10:35

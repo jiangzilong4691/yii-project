@@ -6,9 +6,13 @@ namespace common\components\helpers;
 use common\base\BaseHelper;
 class ComHelper extends BaseHelper
 {
-    /**格式化字段信息为驼峰
+    /**
+     * 格式化字段信息为驼峰
+     *
      * @param array $fields   一维字段['zhibo_id','insert_time']
+     *
      * @return string
+     *
      * @author 姜海强 <jianghaiqiang@zhibo.tv>
      */
     public static function formatFields(array $fields)
@@ -33,8 +37,11 @@ class ComHelper extends BaseHelper
 
     /**
      * 格式化为驼峰key数组
+     *
      * @param array $info   一维关联数组 e.g.: ['user_name'=>'super man','room_num'=>'10086','user_mobile'=>'110']
+     *
      * @return array
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/30
      * @Time: 10:11
@@ -57,9 +64,12 @@ class ComHelper extends BaseHelper
         return $info;
     }
 
-    /**下划线分割转驼峰
+    /**
+     * 下划线分割转驼峰
+     *
      * @param string $str             字符串
      * @param bool   $ucFirst         true为大驼峰，false小驼峰
+     *
      * @return mixed|string
      */
     public static function lineToTuoFeng($str,$ucFirst=false)
@@ -71,7 +81,9 @@ class ComHelper extends BaseHelper
 
     /**
      * 获取客户端ip
+     *
      * @return string|null
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/24
      * @Time: 17:51
@@ -93,7 +105,9 @@ class ComHelper extends BaseHelper
 
     /**
      * 获取long型客户端ip
+     *
      * @return int
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/24
      * @Time: 17:54

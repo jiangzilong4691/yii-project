@@ -15,7 +15,9 @@ class RedisSession extends Session
 
     /**
      * session 获取超时时间
+     *
      * @return int
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/25
      * @Time: 10:17
@@ -31,7 +33,9 @@ class RedisSession extends Session
 
     /**
      * session 自定义超时时间
+     *
      * @param int $value
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/25
      * @Time: 10:17

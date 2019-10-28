@@ -56,9 +56,12 @@ abstract class BaseRedis extends BaseService
 
     /**
      * redis 连接
+     *
      * @param   array  $config      连接配置
      * @param   string $role        所属角色信息
+     *
      * @return \Redis|bool
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/29
      * @Time: 18:03
@@ -102,12 +105,16 @@ abstract class BaseRedis extends BaseService
     }
 
     /**
-     * redis 获取连接实例
-     * @param int $db           选库
-     * @param bool $useMaster   主/从 连接
+     * 获取redis连接实例
+     *
+     * @param int $db           选取的db库 0-15
+     * @param bool $useMaster   是否主库连接
+     *
+     * @return bool|\Redis
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
-     * @Date: 2019/7/29
-     * @Time: 16:56
+     * @Date: 2019/10/28
+     * @Time: 12:59
      */
     protected function getRedis($db = 0,$useMaster = false)
     {
@@ -116,8 +123,11 @@ abstract class BaseRedis extends BaseService
 
     /**
      * redis 获取主库连接
-     * @param   int     $db     选取的库 e.g.:[0-16]
+     *
+     * @param   int     $db     选取的库 e.g. [0-15]
+     *
      * @return bool|\Redis
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/29
      * @Time: 18:16
@@ -139,8 +149,11 @@ abstract class BaseRedis extends BaseService
 
     /**
      * redis 获取从库连接
-     * @param   int     $db     选取的库 e.g.:[0-16]
+     *
+     * @param   int     $db     选取的库 e.g. [0-16]
+     *
      * @return bool|\Redis
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/29
      * @Time: 18:16
@@ -166,7 +179,9 @@ abstract class BaseRedis extends BaseService
 
     /**
      * 随机选取一个从库配置
+     *
      * @return array
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/29
      * @Time: 18:20

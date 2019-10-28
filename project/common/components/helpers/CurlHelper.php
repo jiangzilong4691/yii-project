@@ -15,8 +15,11 @@ class CurlHelper extends BaseHelper
 
     /**
      * 校验 https 请求
+     *
      * @param $url
+     *
      * @return bool
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/24
      * @Time: 15:40
@@ -32,10 +35,13 @@ class CurlHelper extends BaseHelper
 
     /**
      * CURL get请求
+     *
      * @param   string      $url            请求地址
      * @param   int         $connTimeOut    尝试连接超时时间
      * @param   int         $execTimeout    执行超时时间
+     *
      * @return array
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/10/14
      * @Time: 10:43
@@ -61,13 +67,16 @@ class CurlHelper extends BaseHelper
 
     /**
      * curl post 请求
+     *
      * @param   string      $url            请求地址
      * @param   array       $data           请求参数 e.g. : ['name'=>'tom','age'=>19]
      * @param   bool        $postJson       是否发送json请求数据
      * @param   array       $custome        自定义参数信息 e.g. : ['header'=>['Content-type:application/json'],'special'=>'']
      * @param   int         $connTimeout    尝试连接超时时间
      * @param   int         $execTimeout    执行超时时间
+     *
      * @return array
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/24
      * @Time: 16:42
@@ -112,8 +121,11 @@ class CurlHelper extends BaseHelper
 
     /**
      * curl 单一请求 公共返回
+     *
      * @param   resource    $ch     curl句柄
+     *
      * @return array
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/24
      * @Time: 16:16

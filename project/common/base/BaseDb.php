@@ -14,7 +14,9 @@ abstract class BaseDb
 
     /**
      * 选取数据库 子类实现
+     *
      * @return mixed
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/24
      * @Time: 16:55
@@ -30,9 +32,13 @@ abstract class BaseDb
         '{'
     ];
 
-    /**格式化字段或表名称
+    /**
+     * 格式化字段或表名称
+     *
      * @param string    $key   字段或表名
+     *
      * @return string
+     *
      * @author 姜海强 <jianghaiqiang@zhibo.tv>
      */
     public function formatMysqlKey($key)
@@ -45,7 +51,9 @@ abstract class BaseDb
         return '`'.$key.'`';
     }
 
-    /**写操作
+    /**
+     * 写操作
+     *
      * @param string $sql       SQL语句
      * @param array  $params    参数
      *
@@ -56,9 +64,12 @@ abstract class BaseDb
         return $this->getDb()->createCommand($sql,$params)->execute();
     }
 
-    /**向表中插入数据，插入成功返回插入ID，失败返回false
+    /**
+     * 向表中插入数据，插入成功返回插入ID，失败返回false
+     *
      * @param string $table             表名
      * @param array  $colums      键值对，键为字段名称，值为字段值
+     *
      * @return int|bool
      */
     protected function insert($table,array $colums)
@@ -81,9 +92,12 @@ abstract class BaseDb
         return false;
     }
 
-    /**从库查询
+    /**
+     * 从库多查询
+     *
      * @param string $sql       SQL语句
      * @param array  $params    参数
+     *
      * @return array
      */
     private function slaveQuery($sql,$params=[])
@@ -91,14 +105,29 @@ abstract class BaseDb
         return $this->getDb()->createCommand($sql,$params)->queryAll();
     }
 
+    /**
+     * 从库单查询
+     *
+     * @param   string  $sql        sql语句
+     * @param   array   $params     查询参数
+     *
+     * @return mixed
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2019/10/28
+     * @Time: 12:53
+     */
     private function slaveQueryOne($sql,$params=[])
     {
         return $this->getDb()->createCommand($sql, $params)->queryOne();
     }
 
-    /**主库查询
+    /**
+     * 主库多查询
+     *
      * @param string  $sql          SQL语句
      * @param array   $params       参数
+     *
      * @return array
      */
     private function masterQuery($sql,$params=[])
@@ -108,6 +137,18 @@ abstract class BaseDb
         });
     }
 
+    /**
+     * 主库单查询
+     *
+     * @param $sql
+     * @param array $params
+     *
+     * @return mixed
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2019/10/28
+     * @Time: 12:54
+     */
     private function masterQueryOne($sql,$params=[])
     {
         return $this->getDb()->useMaster(function ($db) use($sql,$params){
@@ -116,11 +157,14 @@ abstract class BaseDb
     }
 
     /**
-     *  查询单条记录
+     *查询单条记录
+     *
      * @param $sql
      * @param array $params
      * @param bool $useMaster
+     *
      * @return array|false|mixed
+     *
      * @author 王浩
      */
     protected function querySingle($sql,$params=[],$useMaster=false)
@@ -128,10 +172,13 @@ abstract class BaseDb
         return $useMaster?$this->masterQueryOne($sql,$params):$this->slaveQueryOne($sql,$params);
     }
 
-    /**查询
+    /**
+     * 查询
+     *
      * @param string $sql            SQL语句
      * @param array  $params         参数
      * @param bool   $useMaster      是否用主库查询
+     *
      * @return array
      */
     protected function query($sql,$params=[],$useMaster=false)
@@ -144,7 +191,9 @@ abstract class BaseDb
      * @param string $sql       SQL语句
      * @param array $params     参数
      * @param bool $userMaster  是否用主库查询
+     *
      * @return array
+     *
      * @author 高玉龙
      */
     protected function queryOne($sql,$params=[],$userMaster=false)
@@ -157,9 +206,12 @@ abstract class BaseDb
         return $result;
     }
 
-    /**格式化字段信息为驼峰
+    /**
+     * 格式化字段信息为驼峰
+     *
      * @param array $fields   一维字段['zhibo_id','insert_time']
      * @return string
+     *
      * @author 姜海强 <jianghaiqiang@zhibo.tv>
      */
     protected function formatFields(array $fields)
@@ -167,13 +219,16 @@ abstract class BaseDb
         return ComHelper::formatFields($fields);
     }
 
-    /**得到分页数据
+    /**
+     * 得到分页数据
+     *
      * @param    string   $countSql    得到数量sql
      * @param    string   $listSql     得到列表sql
      * @param    array    $params      参数
      * @param    bool     $useMaster      是否用主库查询
      *
      * @return array
+     *
      * @author 姜海强 <jianghaiqiang@zhibo.tv>
      */
     public function getPageData($countSql,$listSql,$params=[],$pageSize=12,$useMaster=false)
