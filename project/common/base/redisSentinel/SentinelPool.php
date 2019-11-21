@@ -68,7 +68,6 @@ class SentinelPool
                         $config = $this->sentinelGroup[$key];
                         try{
                             $this->_sentinel = new Sentinel($config['host'],$config['port']);
-                            $goOn =false;
                         }catch (RedisSentinelConnectException $exception){
                             unset($this->sentinelGroup[$key]);
                             $goOn = true;
