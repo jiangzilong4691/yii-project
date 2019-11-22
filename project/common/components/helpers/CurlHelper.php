@@ -152,4 +152,65 @@ class CurlHelper extends BaseHelper
         curl_close($ch);
         return $return;
     }
+
+    /**
+     * curl 批量 get 请求
+     *
+     * @param array $urls   e.g. ['key'=>$url]
+     *
+     * @return array
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2019/11/22
+     * @Time: 15:38
+     */
+    public static function multiGet(Array $urls)
+    {
+        if(empty($urls))
+        {
+            return [];
+        }
+        $chs = [];
+        $data = [];
+        $mch = curl_multi_init();
+        foreach ($urls as $key=>$url)
+        {
+            $chs[$key] = curl_init();
+            curl_setopt_array($chs[$key],[
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_CONNECTTIMEOUT => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0
+            ]);
+            curl_multi_add_handle($mch,$chs[$key]);
+        }
+
+        $active = null;
+        // 执行批处理句柄
+        do {
+            $mrc = curl_multi_exec($mch, $active);
+            if($active !== null)
+            {
+                echo $active;
+            }
+        } while ($active > 0);
+
+        while ($active && $mrc == CURLM_OK) {
+            if (curl_multi_select($mch) != -1) {
+                do {
+                    $mrc = curl_multi_exec($mch, $active);
+                } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+            }
+        }
+
+        foreach ($urls as $rqkey=>$url)
+        {
+            $data[$rqkey] = curl_errno($chs[$rqkey]) == 0 ? curl_multi_getcontent($chs[$rqkey]) : '';
+            curl_multi_remove_handle($mch,$chs[$rqkey]);
+        }
+        curl_multi_close($mch);
+        return $data;
+    }
 }
