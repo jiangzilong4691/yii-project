@@ -4,6 +4,7 @@
 namespace frontend\controllers;
 
 
+use common\base\redisSentinel\SentinelPool;
 use common\components\helpers\CurlHelper;
 use common\components\helpers\RequestHelper;
 use common\service\UserService;
@@ -46,8 +47,22 @@ class LoginController extends BaseController
         return $this->apiDataOut($data);
     }
 
-    public function actionTest()
+    public function actionCheckSentinel()
     {
-        var_dump($_COOKIE);die;
+        $config = [
+            'zilong' => [
+                'masterName' => 'zilong',
+                'redisConfig' => [
+                    'password' => 'r64E*U9XEcd!dL8L',
+                    'timeout'  => 10
+                ],
+                'group' => [
+                    ['host'=>'49.234.97.237','port'=>'26379'],
+                    ['host'=>'49.234.97.237','port'=>'26380'],
+                    ['host'=>'49.234.97.237','port'=>'26381'],
+                ]
+            ]
+        ];
+        $masterConfig = SentinelPool::instance($config['zilong'])->getMasterConfig();
     }
 }
