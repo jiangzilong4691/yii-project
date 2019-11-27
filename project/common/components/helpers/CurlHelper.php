@@ -190,11 +190,8 @@ class CurlHelper extends BaseHelper
         $active = null;
         // 执行批处理句柄
         do {
+            usleep(10000);
             $mrc = curl_multi_exec($mch, $active);
-            if($active !== null)
-            {
-                echo $active;
-            }
         } while ($active > 0);
 
         while ($active && $mrc == CURLM_OK) {

@@ -60,7 +60,6 @@ class SentinelPool
         {
             if(!empty($this->sentinelGroup))
             {
-                $goOn = false;
                 do{
                     if(!empty($this->sentinelGroup))
                     {
@@ -68,10 +67,15 @@ class SentinelPool
                         $config = $this->sentinelGroup[$key];
                         try{
                             $this->_sentinel = new Sentinel($config['host'],$config['port']);
+                            $goOn = false;
                         }catch (RedisSentinelConnectException $exception){
                             unset($this->sentinelGroup[$key]);
                             $goOn = true;
                         }
+                    }
+                    else
+                    {
+                        $goOn = false;
                     }
                 }while($goOn);
 
