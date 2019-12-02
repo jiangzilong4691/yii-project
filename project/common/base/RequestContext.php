@@ -7,36 +7,44 @@ namespace common\base;
 abstract class RequestContext
 {
 
+    //字符串 ：转义
     const FILTER_STRING = 'string';
 
+    //整形
     const FILTER_INT = 'int';
 
+    //浮点型
     const FILTER_FLOAT = 'float';
 
+    //过滤后参数
     public $params =[];
 
+    //请求参数
     protected $requestParams = [];
 
+    //请求方法
     protected $requestMethod;
 
+    //错误信息
     private $error = '';
 
+    //参数规则 e.g. ['method'=>['POST','GET'],'params'=>[['name','string'],['age','int'],['money','float']]]
     abstract protected function rules();
 
     private function __construct()
     {
         $this->requestParams = $_REQUEST;
+        $this->requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
         $this->init();
     }
 
     private function init()
     {
-        $this->requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
         $this->filterRequestParams();
     }
 
     /**
-     * 过滤参数
+     * 根据规则过滤参数
      *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/11/29
@@ -54,7 +62,7 @@ abstract class RequestContext
                 {
                     if(is_array($value))
                     {
-                        $this->filterParam($value[0],strtolower($value[1]));
+                        $this->filterParam($value[0],isset($value[1])?$value[1]:'');
                     }
                     else
                     {
@@ -65,6 +73,15 @@ abstract class RequestContext
         }
     }
 
+    /**
+     *
+     * @param   string  $param  参数名
+     * @param   string  $filter 过滤规则
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2019/12/2
+     * @Time: 16:52
+     */
     private function filterParam($param,$filter)
     {
         if(!isset($this->requestParams[$param]))
@@ -82,8 +99,9 @@ abstract class RequestContext
                 break;
             case self::FILTER_FLOAT:
                 $this->addParam($param,(float)$this->requestParams[$param]);
+                break;
             default:
-                //TODO
+                $this->addParam($param,addslashes($this->requestParams[$param]));
         }
     }
 
