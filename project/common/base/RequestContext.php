@@ -26,7 +26,7 @@ abstract class RequestContext
     protected $requestMethod;
 
     //错误信息
-    private $error = '';
+    private $error;
 
     //参数规则 e.g. ['method'=>['POST','GET'],'params'=>[['name','string'],['age','int'],['money','float']]]
     abstract protected function rules();
@@ -105,6 +105,8 @@ abstract class RequestContext
         }
     }
 
+    private static $instance = [];
+
     /**
      * 请求实例
      *
@@ -116,13 +118,18 @@ abstract class RequestContext
      */
     public static function instance()
     {
-        return new static();
+        $class = get_called_class();
+        if(!isset(self::$instance[$class]))
+        {
+            self::$instance[$class] = new $class();
+        }
+        return self::$instance[$class];
     }
 
     /**
      * 添加错误信息
      *
-     * @param $msg
+     * @param string|array $msg    错误信息 e.g. '参数错误' or ['code'=>'403','desc'=>'禁止访问']
      *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/11/29
@@ -195,7 +202,7 @@ abstract class RequestContext
             $validMethod = $rules['method'];
             if(is_array($validMethod))
             {
-                if(!in_array($this->requestMethod,$validMethod))
+                if(!in_array($this->requestMethod,array_map(function ($method){return strtoupper($method);},$validMethod)))
                 {
                     $this->setError('非法访问方式，当前只允许 '.implode(',',$validMethod).'方式访问');
                     return false;
