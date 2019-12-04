@@ -1,7 +1,7 @@
 <?php
 
 
-namespace common\service;
+namespace common\service\mail;
 
 
 use common\base\BaseService;

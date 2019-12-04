@@ -42,8 +42,11 @@ class CurlUploadHelper
 
     /**
      * 单例
+     *
      * @param $name
+     *
      * @return CurlUploadHelper
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/8/5
      * @Time: 16:14
@@ -69,7 +72,9 @@ class CurlUploadHelper
 
     /**
      * 远程服务器上传接口
+     *
      * @return string
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/8/5
      * @Time: 21:44
@@ -81,7 +86,9 @@ class CurlUploadHelper
 
     /**
      * 上传文件错误信息检测
+     *
      * @throws \Exception
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/8/5
      * @Time: 21:26
@@ -128,7 +135,9 @@ class CurlUploadHelper
 
     /**
      * 设置上传要求信息
+     *
      * @param   array   $uploadInfo     配置信息 e.g.: ['maxSize'=>1024,'']
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/8/5
      * @Time: 17:57
@@ -146,7 +155,9 @@ class CurlUploadHelper
 
     /**
      * 上传对外接口 单一文件上传
+     *
      * @return array
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/8/5
      * @Time: 21:53
@@ -194,7 +205,9 @@ class CurlUploadHelper
 
     /**
      * 远程上传
+     *
      * @return bool|string
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/8/5
      * @Time: 21:46

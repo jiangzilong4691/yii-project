@@ -1,7 +1,7 @@
 <?php
 namespace console\controllers;
 
-use common\service\ExceptionService;
+use common\service\exception\ExceptionService;
 use yii\base\ErrorException;
 use yii\base\UserException;
 use yii\console\Exception;

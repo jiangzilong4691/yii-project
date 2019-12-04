@@ -1,7 +1,7 @@
 <?php
 namespace common\exception;
 
-use common\service\ExceptionService;
+use common\service\exception\ExceptionService;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -13,9 +13,13 @@ class ExceptionController extends Controller
 
     /**
      * 异常记录
+     *
      * @param $action
+     *
      * @return bool
+     *
      * @throws \yii\web\BadRequestHttpException
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/25
      * @Time: 21:19
@@ -40,7 +44,9 @@ class ExceptionController extends Controller
 
     /**
      * 错误处理
+     *
      * @return string
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/25
      * @Time: 21:19

@@ -14,6 +14,7 @@ class BaseService
 
     /**
      * 禁止子类克隆
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/25
      * @Time: 10:31

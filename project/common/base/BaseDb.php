@@ -6,6 +6,7 @@ namespace common\base;
 
 use common\components\helpers\ComHelper;
 use yii\data\Pagination;
+use yii\db\Connection;
 
 abstract class BaseDb
 {
@@ -93,7 +94,7 @@ abstract class BaseDb
     }
 
     /**
-     * 从库多查询
+     * 从库查询
      *
      * @param string $sql       SQL语句
      * @param array  $params    参数
@@ -105,34 +106,26 @@ abstract class BaseDb
         return $this->getDb()->createCommand($sql,$params)->queryAll();
     }
 
-    /**
-     * 从库单查询
-     *
-     * @param   string  $sql        sql语句
-     * @param   array   $params     查询参数
-     *
-     * @return mixed
-     *
-     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
-     * @Date: 2019/10/28
-     * @Time: 12:53
-     */
     private function slaveQueryOne($sql,$params=[])
     {
         return $this->getDb()->createCommand($sql, $params)->queryOne();
     }
 
     /**
-     * 主库多查询
+     * 主库查询多查询
      *
-     * @param string  $sql          SQL语句
-     * @param array   $params       参数
+     * @param   string  $sql    查询sql语句
+     * @param   array   $params 绑定参数
      *
-     * @return array
+     * @return mixed
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2019/12/4
+     * @Time: 15:41
      */
     private function masterQuery($sql,$params=[])
     {
-        return $this->getDb()->useMaster(function ($db) use($sql,$params){
+        return $this->getDb()->useMaster(function (Connection $db) use($sql,$params){
             return $db->createCommand($sql,$params)->queryAll();
         });
     }
@@ -140,28 +133,28 @@ abstract class BaseDb
     /**
      * 主库单查询
      *
-     * @param $sql
-     * @param array $params
+     * @param   string      $sql        查询sql语句
+     * @param   array       $params     绑定参数
      *
      * @return mixed
      *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
-     * @Date: 2019/10/28
-     * @Time: 12:54
+     * @Date: 2019/12/4
+     * @Time: 15:43
      */
     private function masterQueryOne($sql,$params=[])
     {
-        return $this->getDb()->useMaster(function ($db) use($sql,$params){
+        return $this->getDb()->useMaster(function (Connection $db) use($sql,$params){
             return $db->createCommand($sql,$params)->queryOne();
         });
     }
 
     /**
-     *查询单条记录
+     * 查询单条记录
      *
-     * @param $sql
-     * @param array $params
-     * @param bool $useMaster
+     * @param string    $sql
+     * @param array     $params
+     * @param bool      $useMaster  是否主库查询
      *
      * @return array|false|mixed
      *
@@ -173,7 +166,7 @@ abstract class BaseDb
     }
 
     /**
-     * 查询
+     * 查询多条记录
      *
      * @param string $sql            SQL语句
      * @param array  $params         参数
@@ -188,12 +181,12 @@ abstract class BaseDb
 
     /**
      * 查询一个结果
+     *
      * @param string $sql       SQL语句
      * @param array $params     参数
      * @param bool $userMaster  是否用主库查询
      *
      * @return array
-     *
      * @author 高玉龙
      */
     protected function queryOne($sql,$params=[],$userMaster=false)
@@ -210,8 +203,8 @@ abstract class BaseDb
      * 格式化字段信息为驼峰
      *
      * @param array $fields   一维字段['zhibo_id','insert_time']
-     * @return string
      *
+     * @return string
      * @author 姜海强 <jianghaiqiang@zhibo.tv>
      */
     protected function formatFields(array $fields)
@@ -268,7 +261,9 @@ abstract class BaseDb
 
     /**
      * 获取表model
+     *
      * @return static
+     *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/7/30
      * @Time: 14:03

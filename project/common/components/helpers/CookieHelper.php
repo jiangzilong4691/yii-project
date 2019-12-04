@@ -10,6 +10,7 @@ class CookieHelper extends BaseHelper
 {
     /**
      * 响应设置cookie
+     *
      * @return mixed|\yii\web\CookieCollection
      */
     private static function getCKForSet()
@@ -19,6 +20,7 @@ class CookieHelper extends BaseHelper
 
     /**
      * 请求读取cookie
+     *
      * @return mixed|\yii\web\CookieCollection
      */
     private static function getCKForGet()
@@ -28,6 +30,7 @@ class CookieHelper extends BaseHelper
 
     /**
      * 设置Cookie
+     *
      * @param string $key            键
      * @param mixed  $value          值
      * @param int $expire            有效时间
@@ -51,6 +54,7 @@ class CookieHelper extends BaseHelper
 
     /**
      * 清除Cookie
+     *
      * @param string $key           键
      */
     public static function del($key,$domain=null)
@@ -72,9 +76,12 @@ class CookieHelper extends BaseHelper
         }
     }
 
-    /**获取Cookie
+    /**
+     * 获取Cookie
+     *
      * @param string $key                    键
      * @param bool   $default_value         不存在要返回的默认值
+     *
      * @return mixed
      */
     public static function get($key,$default_value=false)

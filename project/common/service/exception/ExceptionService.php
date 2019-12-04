@@ -1,11 +1,12 @@
 <?php
 
 
-namespace common\service;
+namespace common\service\exception;
 
 
 use common\base\BaseService;
 use common\entity\ExceptionErrorLogEntity;
+use common\service\mail\MailService;
 
 class ExceptionService extends BaseService
 {

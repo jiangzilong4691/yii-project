@@ -5,7 +5,7 @@ namespace common\base;
 
 
 use common\exception\RedisException;
-use common\service\ExceptionService;
+use common\service\exception\ExceptionService;
 
 abstract class BaseRedis extends BaseService
 {
