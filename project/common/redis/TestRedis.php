@@ -8,9 +8,14 @@ use common\base\BaseRedis;
 
 class TestRedis extends BaseRedis
 {
-    protected function getConfig()
+    protected function getConfig($getMaster)
     {
-        return \Yii::$app->params['redis']['result'];
+        $selected = $getMaster ? 'master' : 'slaves';
+        if(isset(\Yii::$app->params['redis']['result'][$selected]))
+        {
+            return \Yii::$app->params['redis']['result'][$selected];
+        }
+        return [];
     }
 
     public function test()

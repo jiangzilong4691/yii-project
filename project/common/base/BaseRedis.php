@@ -13,7 +13,7 @@ abstract class BaseRedis extends BaseService
      * redis 连接配置项
      * @var
      */
-    abstract protected function getConfig();
+    abstract protected function getConfig($getMaster);
 
     /**
      * redis 连接池
@@ -136,8 +136,8 @@ abstract class BaseRedis extends BaseService
     {
         if($this->masterConn == null)
         {
-            $configs = $this->getConfig();
-            $masterConfig = (is_array($configs) && isset($configs['master']))? $configs['master']:[];
+            $configs = $this->getConfig(true);
+            $masterConfig = is_array($configs) && !empty($configs) ? $configs : [];
             $this->masterConn = $this->getConnInstance($masterConfig,'master');
         }
         if($this->masterConn instanceof \Redis)
@@ -188,18 +188,14 @@ abstract class BaseRedis extends BaseService
      */
     private function getSlaveConfig()
     {
-        $configs = $this->getConfig();
-        if(is_array($configs))
+        $configs = $this->getConfig(false);
+        if(is_array($configs) && !empty($configs))
         {
-            if(isset($configs['slaves']) && !empty($configs['slaves']))
+            if(count($configs)>1)
             {
-                $slaves = $configs['slaves'];
-                if(count($slaves)>1)
-                {
-                    shuffle($slaves);
-                }
-                return $slaves[0];
+                shuffle($configs);
             }
+            return $configs[0];
         }
         return [];
     }

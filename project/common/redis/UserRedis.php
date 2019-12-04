@@ -9,37 +9,21 @@ use common\components\helpers\ComHelper;
 class UserRedis extends BaseRedis
 {
     /**
-     * redis 连接配置
-     * @return mixed
+     * @param $getMaster
+     * @return array
+     * @throws \common\exception\redisSentinel\RedisSentinelConnectException
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
-     * @Date: 2019/8/1
-     * @Time: 13:51
+     * @Date: 2019/12/4
+     * @Time: 18:34
      */
-    protected function getConfig()
+    protected function getConfig($getMaster)
     {
-        //return \Yii::$app->params['redis']['user'];
-        $config = [
-            'zilong' => [
-                'masterName' => 'zilong',
-                'redisConfig' => [
-                    'password' => 'r64E*U9XEcd!dL8L',
-                    'timeout'  => 10
-                ],
-                'group' => [
-                    ['host'=>'49.234.97.237','port'=>'26379'],
-                    ['host'=>'49.234.97.237','port'=>'26380'],
-                    ['host'=>'49.234.97.237','port'=>'26381'],
-                ]
-            ]
-        ];
-        $masterConfig = SentinelPool::instance($config['zilong'])->getMasterConfig();
-        $slaveConfig = SentinelPool::instance($config['zilong'])->getSlavesConfig();
-        return [
-            'master' => $masterConfig,
-            'slaves' => [
-                $slaveConfig
-            ]
-        ];
+        $config = \Yii::$app->params['redisSentinel']['zilong'];
+        if($getMaster)
+        {
+            return SentinelPool::instance($config)->getMasterConfig();
+        }
+        return SentinelPool::instance($config)->getSlavesConfig();
     }
 
     // 0 库

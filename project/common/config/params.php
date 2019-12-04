@@ -43,5 +43,19 @@ return [
                         ]
                     ]
                 ]
+        ],
+    'redisSentinel' => [
+        'zilong' => [
+            'masterName' => 'zilong',
+            'redisConfig' => [
+                'password' => '1111111',
+                'timeout' => 60
+            ],
+            'groups' => [
+                ['host'=>'49.234.97.237','port'=>'26379'],
+                ['host'=>'49.234.97.237','port'=>'26380'],
+                ['host'=>'49.234.97.237','port'=>'26381'],
+            ]
         ]
+    ]
 ];
