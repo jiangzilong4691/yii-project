@@ -11,9 +11,9 @@ namespace common\service\payService\pay;
 
 use common\service\payService\payBusiness\BusinessService;
 use common\service\payService\exception\InvalidBusinessConfigException;
-use yii\base\BaseObject;
+use yii\base\Object;
 
-class PayBaseService extends BaseObject
+class PayBaseService extends Object
 {
     /**
      * 支付实例
@@ -55,13 +55,15 @@ class PayBaseService extends BaseObject
      */
     private static $payTypeMap = [
         BusinessService::PAY_TYPE_WX => [
-            BusinessService::PAY_FROM_APP => WxAppPay::class,
-            BusinessService::PAY_FROM_WEB => WxWebPay::class,
-            BusinessService::PAY_FROM_WX_GZ => WxGzPay::class,
+            BusinessService::PAY_FROM_APP   =>  WxAppPay::class,
+            BusinessService::PAY_FROM_WEB   =>  WxWebPay::class,
+            BusinessService::PAY_FROM_WX_GZ =>  WxGzPay::class,
+            BusinessService::PAY_FROM_WX_H5 =>  WxH5Pay::class,
         ],
         BusinessService::PAY_TYPE_ALI => [
-            BusinessService::PAY_FROM_APP => AliAppPay::class,
-            BusinessService::PAY_FROM_WEB => AliWebPay::class
+            BusinessService::PAY_FROM_APP   => AliAppPay::class,
+            BusinessService::PAY_FROM_WEB   => AliWebPay::class,
+            BusinessService::PAY_FROM_ALI_H5 => AliH5Pay::class,
         ]
     ];
 

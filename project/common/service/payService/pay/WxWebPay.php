@@ -8,14 +8,15 @@
 
 namespace common\service\payService\pay;
 
-use common\components\helpers\ComHelper;
+
+use common\components\ComHelper;
 use common\service\payService\exception\InvalidBusinessConfigException;
 use common\service\payService\payVendor\wechatApp\WxPayApi;
 use common\service\payService\payVendor\wechatApp\WxPayConfig;
 use common\service\payService\payVendor\wechatApp\WxPayException;
 use common\service\payService\payVendor\wechatApp\WxPayUnifiedOrder;
 
-class WxWebPay extends WxPay
+class WxWebPay extends PayBaseService
 {
     //回调地址
     private $notifyUrl;
@@ -77,7 +78,7 @@ class WxWebPay extends WxPay
                 {
                     //返回二维码生成地址
                     return [
-                        'result' => REST_URL.'/qrcode/out?'."img=".json_encode(['imgUrl'=>$unifiedOrderResutl['code_url']]),
+                        'qrcode' => REST_URL.'/qrcode/out?'."img=".json_encode(['imgUrl'=>$unifiedOrderResutl['code_url']]),
                     ];
                 }
                 else
@@ -139,7 +140,7 @@ class WxWebPay extends WxPay
         }
 
         //平台订单商品ID
-        if(isset($tradeParams['productId']) && (int)$tradeParams['productId']>0)
+        if(isset($tradeParams['productId']) && !empty($tradeParams['productId']))
         {
             $this->productId = $tradeParams['productId'];
         }
@@ -186,6 +187,6 @@ class WxWebPay extends WxPay
      */
     private function setNotifyUrl()
     {
-        $this->notifyUrl = 'notify_url';
+        $this->notifyUrl = REST_URL . '/pay-notify/wx-gz';
     }
 }

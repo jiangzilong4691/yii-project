@@ -39,7 +39,7 @@ class BusinessVipService extends BusinessService
         }
         else
         {
-            return $this->nameBody ? $this->getSogoName().$this->nameBody : $this->getSogoName().$this->unifiedOrderName;
+            return $this->nameBody ? $this->getSogoName().' '.$this->nameBody : $this->getSogoName().$this->unifiedOrderName;
         }
     }
 }

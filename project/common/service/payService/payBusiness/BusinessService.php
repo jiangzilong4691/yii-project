@@ -11,9 +11,9 @@ namespace common\service\payService\payBusiness;
 
 use common\service\payService\exception\InvalidBusinessConfigException;
 use common\service\payService\exception\InvalidBusinessExcetion;
-use yii\base\BaseObject;
+use yii\base\Object;
 
-abstract class BusinessService extends BaseObject
+abstract class BusinessService extends Object
 {
     //--------------------------------业务ID--------------------------------//
     /**
@@ -53,6 +53,16 @@ abstract class BusinessService extends BaseObject
      * 微信公众号支付
      */
     const PAY_FROM_WX_GZ = 3;
+
+    /**
+     * 微信 H5支付
+     */
+    const PAY_FROM_WX_H5 = 4;
+
+    /**
+     * 支付宝手机网站支付
+     */
+    const PAY_FROM_ALI_H5 =5;
 
     //--------------------------------支付来源--------------------------------//
 
@@ -130,13 +140,15 @@ abstract class BusinessService extends BaseObject
     private static $instance = [];
 
     /**
-     * 获取当前业务实例
      * @param   int     $businessId     业务ID
      * @param   array   $params         业务参数
-     * @return mixed
-     * @author 姜子龙<jiangzilong@zhibo.tv>
+     * @return  mixed
      * @throws InvalidBusinessConfigException
      * @throws InvalidBusinessExcetion
+     * @throws \yii\base\InvalidConfigException
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2019/12/19
+     * @Time: 15:16
      */
     public static function getInstance($businessId,Array $params)
     {
@@ -177,14 +189,20 @@ abstract class BusinessService extends BaseObject
     {
         if(isset($this->params['payFrom'])
             &&
-            in_array($this->params['payFrom'],[self::PAY_FROM_APP,self::PAY_FROM_WEB,self::PAY_FROM_WX_GZ]))
+            in_array($this->params['payFrom'],[
+                self::PAY_FROM_APP,
+                self::PAY_FROM_WEB,
+                self::PAY_FROM_WX_GZ,
+                self::PAY_FROM_WX_H5,
+                self::PAY_FROM_ALI_H5
+            ]))
         {
             $this->payFrom = $this->params['payFrom'];
             unset($this->params['payFrom']);
         }
         else
         {
-            throw new InvalidBusinessConfigException('支付来源必填：App或Web');
+            throw new InvalidBusinessConfigException('支付来源必填：App,Web,公众号或h5支付');
         }
     }
 
@@ -294,14 +312,18 @@ abstract class BusinessService extends BaseObject
     protected function getSogoName()
     {
         $sogoMap = $this->sogoMap();
-        if(is_array($sogoMap[$this->payFrom]))
+        if(isset($sogoMap[$this->payFrom]))
         {
-            return $sogoMap[$this->payFrom][$this->payAppBag];
+            if(is_array($sogoMap[$this->payFrom]))
+            {
+                return $sogoMap[$this->payFrom][$this->payAppBag];
+            }
+            else
+            {
+                return $sogoMap[$this->payFrom];
+            }
         }
-        else
-        {
-            return $sogoMap[$this->payFrom];
-        }
+        return '中国体育';
     }
 
     /**

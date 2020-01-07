@@ -78,19 +78,6 @@ class ImTencentFriendsService extends ImService
      */
     public function addFriends($fromAccount,Array $friendsInfo,$addType=ImService::FRIENDS_ADD_TYPE_SINGLE,$force=false)
     {
-        $friendsInfo = [
-            [
-                'userId' => '4701015',
-                'remark' => 'best friends',
-                'groupName'  => '同学',
-                'addWording' => '快加我好友'
-            ],
-            [
-                'userId' => '333',
-                'addWording' => '加你了呀'
-            ]
-        ];
-
         $command = [
             'mission' => IM::TENCENT_MISSION_FRIENDS_ADD,
             'data' => [

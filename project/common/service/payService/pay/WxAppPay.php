@@ -8,7 +8,8 @@
 
 namespace common\service\payService\pay;
 
-use common\components\helpers\ComHelper;
+
+use common\components\ComHelper;
 use common\service\payService\exception\InvalidBusinessConfigException;
 use common\service\payService\payBusiness\BusinessService;
 use common\service\payService\payVendor\wechatApp\WxPayApi;
@@ -16,7 +17,7 @@ use common\service\payService\payVendor\wechatApp\WxPayConfig;
 use common\service\payService\payVendor\wechatApp\WxPayException;
 use common\service\payService\payVendor\wechatApp\WxPayUnifiedOrder;
 
-class WxAppPay extends WxPay
+class WxAppPay extends PayBaseService
 {
     //回调地址
     private $notifyUrl;
@@ -45,11 +46,8 @@ class WxAppPay extends WxPay
     /**
      * 统一下单
      * @return array
-     * @throws InvalidBusinessConfigException
+     * @author 姜子龙<jiangzilong@zhibo.tv>
      * @throws WxPayException
-     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
-     * @Date: 2019/9/12
-     * @Time: 11:32
      */
     public function unifiedOrder()
     {
@@ -87,7 +85,7 @@ class WxAppPay extends WxPay
                 ];
                 //二次签名
                 $data2App['sign'] = $this->getSign($data2App);
-                return ['result' => $data2App];
+                return $data2App;
             }
             //统一下单异常
             throw new WxPayException($orderReturn['return_msg']);
@@ -99,10 +97,6 @@ class WxAppPay extends WxPay
     /**
      * 校验支付参数|预初始化参数
      * @param $business
-     * @throws InvalidBusinessConfigException
-     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
-     * @Date: 2019/9/12
-     * @Time: 11:32
      */
     private function _preInit()
     {
@@ -189,12 +183,12 @@ class WxAppPay extends WxPay
         if($this->business->payAppBag == BusinessService::PAY_APP_BAG_ZBTV)
         {
             //直播TV回调地址
-            $this->notifyUrl = 'notify_url';
+            $this->notifyUrl = REST_URL.'/pay-notify/wx-zbtv';
         }
         else
         {
             //中国体育回调地址
-            $this->notifyUrl = 'notify_url';
+            $this->notifyUrl = REST_URL.'/pay-notify/wx-zhty';
         }
     }
 

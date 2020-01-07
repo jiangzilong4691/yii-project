@@ -4,15 +4,16 @@
 namespace common\service\payService\pay;
 
 
-use common\components\helpers\ComHelper;
+use common\components\ComHelper;
 use common\service\payService\exception\InvalidBusinessConfigException;
 use common\service\payService\payVendor\wechatApp\JsApiPay;
 use common\service\payService\payVendor\wechatApp\WxPayApi;
 use common\service\payService\payVendor\wechatApp\WxPayConfig;
 use common\service\payService\payVendor\wechatApp\WxPayException;
 use common\service\payService\payVendor\wechatApp\WxPayUnifiedOrder;
+use common\components\AppHelper;
 
-class WxGzPay extends WxPay
+class WxGzPay extends PayBaseService
 {
     //回调地址
     private $notifyUrl;
@@ -54,8 +55,15 @@ class WxGzPay extends WxPay
 
         try{
             $input = new WxPayUnifiedOrder();
-            $input->SetAppid(WxPayConfig::XC_GZ_APPID);
-            $input->SetMch_id(WxPayConfig::MCHID);
+//            if (true){
+				//线上用新传帐号
+				$input->SetAppid(WxPayConfig::XC_GZ_APPID);
+				$input->SetMch_id(WxPayConfig::MCHID);
+//			}else{
+//				//t100用steven帐号
+//				$input->SetAppid(WxPayConfig::STEVENAPPID);
+//				$input->SetMch_id(WxPayConfig::MCHID_STEVEN);
+//			}
             $input->SetBody($this->business->getUnifiedOrderBody());
             $input->SetAttach("");
             $input->SetOut_trade_no($this->tradeNo);
@@ -76,7 +84,7 @@ class WxGzPay extends WxPay
                     //获取jsapi支付参数
                     $jsApiParameters = (new JsApiPay())->GetJsApiParameters($unifiedOrderResutl);
                     return [
-                        'result' => $jsApiParameters
+                        'jsApiParameters' => $jsApiParameters
                     ];
                 }
                 else
@@ -185,6 +193,6 @@ class WxGzPay extends WxPay
      */
     private function setNotifyUrl()
     {
-        $this->notifyUrl = 'notify_url';
+        $this->notifyUrl = REST_URL . '/pay-notify/wx-gz';
     }
 }
