@@ -5,9 +5,9 @@ namespace common\service\IM\ImExecutor;
 
 
 use common\service\IM\exception\InstantMsgingException;
-use yii\base\Object;
+use yii\base\BaseObject;
 
-abstract class IM extends Object
+abstract class IM extends BaseObject
 {
 
     //---------------------腾讯云 action---------------------//
@@ -85,8 +85,11 @@ abstract class IM extends Object
 
     /**
      * 执行任务调度
+     *
      * @param   array   $missionParams    任务调度参数
+     *
      * @return array|mixed
+     * 
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/12/21
      * @Time: 14:55

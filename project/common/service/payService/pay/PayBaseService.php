@@ -10,10 +10,9 @@ namespace common\service\payService\pay;
 
 
 use common\service\payService\payBusiness\BusinessService;
-use common\service\payService\exception\InvalidBusinessConfigException;
-use yii\base\Object;
+use yii\base\BaseObject;
 
-class PayBaseService extends Object
+class PayBaseService extends BaseObject
 {
     /**
      * 支付实例
