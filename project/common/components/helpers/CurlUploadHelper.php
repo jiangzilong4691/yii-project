@@ -223,9 +223,18 @@ class CurlUploadHelper
             'cfile' => $file
         ];
         $curl = curl_init();
-        curl_setopt($curl,CURLOPT_URL,$this->getUploadUrl());
+        $uploadServer = $this->getUploadUrl();
+        curl_setopt($curl,CURLOPT_URL,$uploadServer);
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: multipart/form-data']);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+        $schema = parse_url($uploadServer,PHP_URL_SCHEME);
+        if($schema !== null && strtolower($schema) === 'https')
+        {
+            //https 禁止校验对等证书 和 公用域名
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($curl,CURLOPT_SSL_VERIFYHOST,0);
+        }
+
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
