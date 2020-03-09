@@ -11,7 +11,7 @@ class RedisSession extends Session
      * session 有效时间
      * @var
      */
-    protected $timeout;
+    protected $timeout = null;
 
     /**
      * session 获取超时时间
