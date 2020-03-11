@@ -49,7 +49,6 @@ class CookieHelper extends BaseHelper
             }
         }
         $ck->add(new Cookie($config));
-        unset($config);
     }
 
     /**
@@ -72,7 +71,6 @@ class CookieHelper extends BaseHelper
                 }
             }
             $ck->add(new Cookie($config));
-            unset($config);
         }
     }
 
