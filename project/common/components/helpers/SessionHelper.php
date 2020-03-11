@@ -86,7 +86,7 @@ class SessionHelper extends BaseHelper
         }
         else
         {
-            return self::getSession()->destroy();
+            return self::getSession()->removeAll();
         }
     }
 
