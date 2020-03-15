@@ -26,7 +26,7 @@ class ExceptionController extends Controller
      */
     public function beforeAction($action)
     {
-        return true;
+//        return true;
         $exception = \Yii::$app->getErrorHandler()->exception;
 
         ExceptionService::instance()->recordException($exception);
@@ -57,6 +57,6 @@ class ExceptionController extends Controller
         {
             return $this->msgToClient;
         }
-        exit($this->render('@common/views/error'));
+        return $this->render('@common/views/error');
     }
 }
