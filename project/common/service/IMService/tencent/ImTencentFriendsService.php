@@ -4,9 +4,12 @@
 namespace common\service\IMService\tencent;
 
 
+use common\components\ArrayHelper;
+use common\entity\im\ImAttentionImportLogEntity;
 use common\service\IM\ImExecutor\IM;
 use common\service\IM\InstantMessaging;
 use common\service\IMService\ImService;
+use yii\log\EmailTarget;
 
 /**
  * 用户关系链管理类
@@ -76,7 +79,7 @@ class ImTencentFriendsService extends ImService
      * @Date: 2019/12/26
      * @Time: 19:36
      */
-    public function addFriends($fromAccount,Array $friendsInfo,$addType=ImService::FRIENDS_ADD_TYPE_SINGLE,$force=false)
+    public function addFriends($fromAccount,Array $friendsInfo,$addType=ImService::FRIENDS_ADD_TYPE_SINGLE,$force=true)
     {
         $command = [
             'mission' => IM::TENCENT_MISSION_FRIENDS_ADD,
@@ -94,16 +97,17 @@ class ImTencentFriendsService extends ImService
             $resultData = $execResult['data'];
             if($resultData['code'] == '200')
             {
-                $returnResult = ['code' => '200','desc' => $resultData['result']];
+//                $returnResult = ['code' => '200','desc' => $resultData['result']];
+                $returnResult = ['code' => '200','desc' => $resultData['msg'],'list'=>$resultData['result']['item']['items']];
             }
             else
             {
-                $returnResult = ['code' => '201','desc' => $resultData['msg']];
+                $returnResult = ['code' => '201','desc' => $resultData['msg'],'errCode'=>$resultData['errno']];
             }
         }
         else
         {
-            $returnResult = ['code' => '-1','desc'=>$execResult['msg']];
+            $returnResult = ['code' => '-1','desc'=>$execResult['msg'],'errCode'=>0];
         }
         return $returnResult;
     }
@@ -305,16 +309,16 @@ class ImTencentFriendsService extends ImService
             $resultData = $execResult['data'];
             if($resultData['code'] == '200')
             {
-                $returnResult = ['code' => '200','desc' => $resultData['result']];
+                $returnResult = ['code' => '200','desc' => 'success','list'=>$resultData['result']];
             }
             else
             {
-                $returnResult = ['code' => '201','desc' => $resultData['msg']];
+                $returnResult = ['code' => '201','desc' => $resultData['msg'],'errCode'=>$resultData['errno']];
             }
         }
         else
         {
-            $returnResult = ['code' => '-1','desc'=>$execResult['msg']];
+            $returnResult = ['code' => '-1','desc'=>$execResult['msg'],'errCode'=>0];
         }
         return $returnResult;
     }
@@ -422,6 +426,7 @@ class ImTencentFriendsService extends ImService
      */
     public function addFriendsBlackList($fromAccount,Array $toAccounts)
     {
+        $toAccounts = array_map('strval',$toAccounts);
         $command = [
             'mission' => IM::TENCENT_MISSION_FRIENDS_BLACKLIST_ADD,
             'data' => [
@@ -436,16 +441,16 @@ class ImTencentFriendsService extends ImService
             $resultData = $execResult['data'];
             if($resultData['code'] == '200')
             {
-                $returnResult = ['code' => '200','desc' => $resultData['result']];
+                $returnResult = ['code' => '200','desc' => 'success','list'=>$resultData['result']['list']['items']];
             }
             else
             {
-                $returnResult = ['code' => '201','desc' => $resultData['msg']];
+                $returnResult = ['code' => '201','desc' => $resultData['msg'],'errCode'=>$resultData['errno']];
             }
         }
         else
         {
-            $returnResult = ['code' => '-1','desc'=>$execResult['msg']];
+            $returnResult = ['code' => '-1','desc'=>$execResult['msg'],'errCode'=>0];
         }
         return $returnResult;
     }
@@ -464,6 +469,7 @@ class ImTencentFriendsService extends ImService
      */
     public function deleteFriendsBlackList($fromAccount,Array $toAccounts)
     {
+        $toAccounts =  array_map('strval',$toAccounts);
         $command = [
             'mission' => IM::TENCENT_MISSION_FRIENDS_BLACKLIST_DELETE,
             'data' => [
@@ -478,7 +484,7 @@ class ImTencentFriendsService extends ImService
             $resultData = $execResult['data'];
             if($resultData['code'] == '200')
             {
-                $returnResult = ['code' => '200','desc' => $resultData['result']];
+                $returnResult = ['code' => '200','desc' => 'success','list'=>$resultData['result']['list']['items']];
             }
             else
             {
@@ -590,5 +596,206 @@ class ImTencentFriendsService extends ImService
             $returnResult = ['code' => '-1','desc'=>$execResult['msg']];
         }
         return $returnResult;
+    }
+
+    /**
+     * 导入用户关注到IM好友系统
+     *
+     * @param   string      $fromUserId     用户
+     * @param   string      $toUserId       已关注用户ID
+     * @param   bool        $addLog         是否加入日志
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/5/21
+     * @Time: 15:26
+     */
+    public function importAttentionToFriends($fromUserId, $toUserId,$addLog = true)
+    {
+        $toUser = [
+            [
+                'userId' => $toUserId
+            ]
+        ];
+        $rResult = $this->addFriends((string)$fromUserId,$toUser);
+        if($addLog)
+        {
+            if($rResult['code'] != '200')
+            {
+                ImAttentionImportLogEntity::model()->addFailLog($fromUserId,$toUserId,$rResult['desc'],$rResult['errCode'],ImAttentionImportLogEntity::OPERATION_TYPE_FRIENDS_ADD);
+            }
+            else
+            {
+                $dataList = $rResult['list'];
+                $dataListIndex = ArrayHelper::index($dataList,'To_Account');
+                if($dataListIndex[$toUserId]['ResultCode'] != 0 && $dataListIndex[$toUserId]['ResultCode'] != 30001)
+                {
+                    // 30001 是已存在好友关系状态码
+                    ImAttentionImportLogEntity::model()->addFailLog($fromUserId,$toUserId,$dataListIndex[$toUserId]['ResultInfo'],$dataListIndex[$toUserId]['ResultCode'],ImAttentionImportLogEntity::OPERATION_TYPE_FRIENDS_ADD);
+                }
+            }
+        }
+        return;
+    }
+
+    /**
+     * 删除用户取消关注到IM好友
+     *
+     * @param   string      $fromUserId     用户
+     * @param   string      $toUserId       取消关注用户ID
+     * @param   bool        $addLog         是否加入日志
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/5/21
+     * @Time: 15:26
+     */
+    public function deleteAttentionToFriends($fromUserId, $toUserId,$addLog = true)
+    {
+        $toUser = [
+            $toUserId
+        ];
+        $rResult = $this->deleteFriends((string)$fromUserId,$toUser);
+        if($addLog)
+        {
+            if($rResult['code'] != '200')
+            {
+                ImAttentionImportLogEntity::model()->addFailLog($fromUserId,$toUserId,$rResult['desc'],$rResult['errCode'],ImAttentionImportLogEntity::OPERATION_TYPE_FRIENDS_DELETE);
+            }
+            else
+            {
+                $list = $rResult['list'];
+                $dataListIndex = ArrayHelper::index($list,'To_Account');
+                if($dataListIndex[$toUserId]['ResultCode'] != 0)
+                {
+                    ImAttentionImportLogEntity::model()->addFailLog($fromUserId,$toUserId,$dataListIndex[$toUserId]['ResultInfo'],$dataListIndex[$toUserId]['ResultCode'],ImAttentionImportLogEntity::OPERATION_TYPE_FRIENDS_DELETE);
+                }
+            }
+        }
+        return;
+    }
+
+    /**
+     * 加入黑名单
+     *
+     * @param $userId
+     * @param $toUserId
+     * @param $addLog
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/5/27
+     * @Time: 15:52
+     */
+    public function importBlackList($userId,$toUserId,$addLog=true)
+    {
+        $toUser = [
+            $toUserId
+        ];
+        $rResult = $this->addFriendsBlackList((string)$userId,$toUser);
+        if($addLog)
+        {
+            if($rResult['code'] != '200')
+            {
+                ImAttentionImportLogEntity::model()->addFailLog($userId,$toUserId,$rResult['desc'],$rResult['errCode'],ImAttentionImportLogEntity::OPERATION_TYPE_BLACK_ADD);
+            }
+            else
+            {
+                $list = $rResult['list'];
+                $dataListIndex = ArrayHelper::index($list,'To_Account');
+                if($dataListIndex[$toUserId]['ResultCode'] != 0)
+                {
+                    ImAttentionImportLogEntity::model()->addFailLog($userId,$toUserId,$dataListIndex[$toUserId]['ResultInfo'],$dataListIndex[$toUserId]['ResultCode'],ImAttentionImportLogEntity::OPERATION_TYPE_BLACK_ADD);
+                }
+            }
+        }
+        return;
+    }
+
+    /**
+     * 删除黑名单
+     *
+     * @param $userId
+     * @param $toUserId
+     * @param bool $addLog
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/5/27
+     * @Time: 16:07
+     */
+    public function deleteBlackList($userId,$toUserId,$addLog = true)
+    {
+        $toUser = [
+            $toUserId
+        ];
+        $rResult = $this->deleteFriendsBlackList((string)$userId,$toUser);
+        if($addLog)
+        {
+            if($rResult['code'] != '200')
+            {
+                ImAttentionImportLogEntity::model()->addFailLog($userId,$toUserId,$rResult['desc'],$rResult['errCode'],ImAttentionImportLogEntity::OPERATION_TYPE_BLACK_DELETE);
+            }
+            else
+            {
+                $list = $rResult['list'];
+                $dataListIndex = ArrayHelper::index($list,'To_Account');
+                if($dataListIndex[$toUserId]['ResultCode'] != 0)
+                {
+                    ImAttentionImportLogEntity::model()->addFailLog($userId,$toUserId,$dataListIndex[$toUserId]['ResultInfo'],$dataListIndex[$toUserId]['ResultCode'],ImAttentionImportLogEntity::OPERATION_TYPE_BLACK_DELETE);
+                }
+            }
+        }
+        return;
+    }
+
+
+
+    // 更新好友关系密钥
+    private static $updateFriendsSecret = '3sH7ePQibqYopy0l';
+
+    const UPDATE_FRIENDS_ADD  = 'friendAdd';
+    const UPDATE_FRIENDS_DELETE  = 'friendDelete';
+    const UPDATE_BLACKLIST_ADD = 'blackAdd';
+    const UPDATE_BLACKLIST_DELETE = 'blackDelete';
+
+    /**
+     * 更新好友关系  加好友|删好友|加黑名单|删黑名单
+     *
+     * @param   string      $type       操作类型
+     * @param   int         $userId     操作用户ID
+     * @param   int         $friendUserId   被处理用户ID
+     * @param   int         $time       时间戳
+     * @param   string      $sign       加密校验码
+     *
+     * @return array
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/5/27
+     * @Time: 16:13
+     */
+    public function updateUserFriendsRelation($type,$userId,$friendUserId,$time,$sign)
+    {
+        $verifySign = md5($userId.$friendUserId.$type.$time.self::$updateFriendsSecret);
+        if($verifySign != $sign)
+            return ['code' => '-1','desc' => '校验信息错误'];
+        switch ($type)
+        {
+            case self::UPDATE_FRIENDS_ADD :
+                $this->importAttentionToFriends($userId,$friendUserId,true);
+                $result = [];
+                break;
+            case self::UPDATE_FRIENDS_DELETE :
+                $this->deleteAttentionToFriends($userId,$friendUserId);
+                $result = [];
+                break;
+            case self::UPDATE_BLACKLIST_ADD :
+                $this->importBlackList($userId,$friendUserId);
+                $result = [];
+                break;
+            case self::UPDATE_BLACKLIST_DELETE :
+                $this->deleteBlackList($userId,$friendUserId);
+                $result = [];
+                break;
+            default:
+                $result = ['code' => '-1','desc' => '操作类型不存在'];
+        }
+        return $result;
     }
 }

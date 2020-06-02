@@ -13,7 +13,7 @@ class MessageManage extends Tencent
     private function _request($reqestData,$event,$appId,$managerSig)
     {
         $requestUrl = self::REQUEST_URL_MAIN.$event;
-        return $this->_comRequest($requestUrl,$reqestData,$appId,$managerSig);
+        return $this->comRequest($requestUrl,$reqestData,$appId,$managerSig);
     }
 
     /**
@@ -71,10 +71,10 @@ class MessageManage extends Tencent
         $type = $missionData['msgType'];
         switch ($type)
         {
-            case 'text':
+            case 1:
                 $msgBody = $this->_formatTextMsg($missionData['msgContent']);
                 break;
-            case 'face':
+            case 2:
                 $msgBody = $this->_formatFaceMsg($missionData['msgContent']);
                 break;
             default:
@@ -184,7 +184,7 @@ class MessageManage extends Tencent
      */
     private function _multiSendReply($requestResult)
     {
-        return $this->_comReturn($requestResult,function($resultData){
+        return $this->comReturn($requestResult,function($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 return [
@@ -228,7 +228,7 @@ class MessageManage extends Tencent
      */
     private function _singleSendReply($requestResult)
     {
-        return $this->_comReturn($requestResult,function ($resultData){
+        return $this->comReturn($requestResult,function ($resultData){
 
             if($resultData['ActionStatus'] == 'OK')
             {
@@ -271,7 +271,7 @@ class MessageManage extends Tencent
             'MsgKey'       => $missionData['msgKey']
         ];
         $requestResult = $this->_request($withdrawData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($requestResult,function ($resultData){
+        return $this->comReturn($requestResult,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 return [
@@ -314,7 +314,7 @@ class MessageManage extends Tencent
             'MsgBody'      => $this->_getMsgBody($missionData['msgInfo'])
         ];
         $requestResult = $this->_request($importData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($requestResult,function ($resultData){
+        return $this->comReturn($requestResult,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 return [

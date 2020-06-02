@@ -26,7 +26,7 @@ class UserAccountManage extends Tencent
     private function _request($reqestData,$event,$appId,$managerSig)
     {
         $requestUrl = self::REQUEST_URL_MAIN.$event;
-        return $this->_comRequest($requestUrl,$reqestData,$appId,$managerSig);
+        return $this->comRequest($requestUrl,$reqestData,$appId,$managerSig);
     }
 
     /**
@@ -46,19 +46,22 @@ class UserAccountManage extends Tencent
         $event = 'account_import';
         $info = call_user_func_array($callback,[$this->managerId]);
         $result = $this->_request($importData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
+                $errCode = 0;
                 $msg  = 'success';
             }
             else
             {
                 $code = '-2';
+                $errCode = $resultData['ErrorCode'];
                 $msg  = $resultData['ErrorInfo'];
             }
             return [
                 'code' => $code,
+                'errCode' => $errCode,
                 'msg'  => $msg
             ];
         });
@@ -81,7 +84,7 @@ class UserAccountManage extends Tencent
         $event = 'multiaccount_import';
         $info = call_user_func_array($callback,[$this->managerId]);
         $result = $this->_request($importData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 if(empty($resultData['FailAccounts']))
@@ -128,7 +131,7 @@ class UserAccountManage extends Tencent
         $event = 'account_check';
         $info = call_user_func_array($callback,[$this->managerId]);
         $result = $this->_request($checkData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 return [
@@ -162,7 +165,7 @@ class UserAccountManage extends Tencent
         $event = 'account_delete';
         $info = call_user_func_array($callback,[$this->managerId]);
         $result = $this->_request($deleteData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 return [
@@ -196,7 +199,7 @@ class UserAccountManage extends Tencent
         $event = 'kick';
         $info = call_user_func_array($callback,[$this->managerId]);
         $result = $this->_request($failuerData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 return [

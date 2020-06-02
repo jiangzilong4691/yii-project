@@ -22,9 +22,9 @@ class InstantMessaging
      */
     private function __construct($imObjectId)
     {
-        if(isset(self::$imObjectConfig[$imObjectId]))
+        if(isset(self::imObjectConfig()[$imObjectId]))
         {
-            $this->imObject = \Yii::createObject(self::$imObjectConfig[$imObjectId]);
+            $this->imObject = \Yii::createObject(self::imObjectConfig()[$imObjectId]);
         }
         else
         {
@@ -39,17 +39,25 @@ class InstantMessaging
     }
 
     /**
-     * 实例配置
-     * @var array
+     * 服务实例配置
+     *
+     * @return array
+     * 
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/3/19
+     * @Time: 15:54
      */
-    private static $imObjectConfig = [
-        self::IM_OBJECT_TENCENT =>
-            [
-                'class' => ImTencent::class,
-                'appId' => '11111',
-                'secretKey' => '11111'
-            ],
-    ];
+    private static function imObjectConfig()
+    {
+        return [
+            self::IM_OBJECT_TENCENT =>
+                [
+                    'class' => ImTencent::class,
+                    'appId' => \Yii::$app->params['Tencent_IM']['appId'],
+                    'secretKey' => \Yii::$app->params['Tencent_IM']['secretKey']
+                ],
+        ];
+    }
 
     /**
      * 执行任务

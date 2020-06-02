@@ -4,7 +4,9 @@
 namespace common\service\IMService\tencent;
 
 
+use common\entity\im\ImMsgRecordEntity;
 use common\service\IM\ImExecutor\IM;
+use common\service\IM\ImExecutor\ImTencent;
 use common\service\IM\InstantMessaging;
 use common\service\IMService\ImService;
 
@@ -15,9 +17,11 @@ use common\service\IMService\ImService;
  */
 class ImTencentMsgService extends ImService
 {
+
+    public static $sendMsgKey = 'GvZ72YCHglmAJSDq';
     /**
      * 单发单聊消息
-     * @param   array   $sendContentInfo    消息配置
+     * @param   ImTencentMsg   $msg    信息
      * [
      *      'sync' => Integer,
      *      'fromAccount' => '1497428',
@@ -38,36 +42,113 @@ class ImTencentMsgService extends ImService
      * @Date: 2019/12/24
      * @Time: 16:38
      */
-    public function msgSend(Array $sendContentInfo)
+    private function msgSend(ImTencentMsg $msg)
     {
-        $content = [
-            '啦啦啦啦啦 卖报小行家',
-            '啦啦啦  lidong is dog',
-            '哈哈哈  lidong 不知道',
-            '来呀 造作呀 ',
-            '反正有大把时光',
-            '这都是些啥玩应',
-            '来来来 接着测',
-            '腾讯云 接口全是bug TNND'
-        ];
-        shuffle($content);
         $sendContentInfo = [
-            'sync' => self::MSG_SEND_SYNC_YES,
-            'fromAccount' =>'8369',
-            'toAccount' => '4701015',//['1497428','548796','369597'],
-            'msgType'  => self::MSG_TYPE_TEXT,
-            'msgContent' => $content[0]
+            'sync' => $msg->msgSync,
+            'fromAccount' => (string)$msg->userIdSend,
+            'toAccount' => $msg->userIdReceive,//['1497428','548796','369597'],
+            'msgType'  => $msg->msgType,
+            'msgContent' => $msg->msgContent
         ];
-        if(is_string($sendContentInfo['toAccount']))
+        if(is_string($sendContentInfo['toAccount']) || is_int($sendContentInfo['toAccount']))
         {
+            if(is_int($sendContentInfo['toAccount']))
+                $sendContentInfo['toAccount'] = (string)$sendContentInfo['toAccount'];
             return $this->_msgSendSingle($sendContentInfo);
         }
         else if(is_array($sendContentInfo['toAccount']))
         {
             return $this->_msgSendBatch($sendContentInfo);
         }
-        return ['code' => '-1','desc' => '接收账号仅支持字符串或字符串数组'];
+        return ['send' => false,'desc' => '接收账号仅支持字符串或字符串数组'];
 
+    }
+
+    /**
+     * 发送信息并更新发送信息结果
+     *
+     * @param ImTencentMsg $msg
+     * @param $recordId
+     *
+     * @return array
+     *
+     * @throws \yii\db\Exception
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/3/17
+     * @Time: 18:08
+     */
+    private function sendUpdateRecord(ImTencentMsg $msg,$recordId)
+    {
+        $sendResult = $this->msgSend($msg);
+        if($sendResult['send'])
+        {
+            //发送成功 修改发送状态 返回success
+            ImMsgRecordEntity::model()->updateSendRecord($recordId,ImMsgRecordEntity::MSG_SEND_RESULT_SUCCESS,$sendResult['desc'],$sendResult['sendKey']);
+            return ['code' => '200','desc'=>'发送成功'];
+        }
+        else
+        {
+            //发送失败 修改发送状态 返回fail
+            ImMsgRecordEntity::model()->updateSendRecord($recordId,ImMsgRecordEntity::MSG_SEND_RESULT_FAIL,$sendResult['desc']);
+            return ['code' => '-1','desc'=>'发送失败'];
+        }
+    }
+
+    /**
+     * 新增信息发送
+     *
+     * @param   int        $receiveUserId       接收用户ID
+     * @param   string     $msgContent          发送消息内容
+     * @param   int        $msgContentType      发送信息内容类型  e.g. 0 无分类  1 中奖信息 2 一般通知
+     * @param   int         $sendUserId         指定的发送方用户ID 不指定 默认为管理员发送
+     * @param   int         $msgType
+     * @param   int         $sync
+     *
+     * @return array
+     *
+     * @throws \yii\db\Exception
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/3/17
+     * @Time: 18:07
+     */
+    public function addMsgSend($receiveUserId,$msgContent,$msgContentType,$sendUserId=0,$msgType=ImTencentMsg::MSG_TYPE_TEXT,$sync=ImTencentMsg::MSG_SEND_SYNC_YES)
+    {
+        //添加记录 部分信息暂时默认 当前仅考虑单条发送
+        $recordId = ImMsgRecordEntity::model()->addRecord($sendUserId,$receiveUserId,$msgContent,$msgContentType,$msgType,$sync);
+        if($recordId)
+        {
+            $msg = new ImTencentMsg($sendUserId,$receiveUserId,$msgContent);
+            $msg->msgType = $msgType;
+            $msg->msgSync = $sync;
+            return $this->sendUpdateRecord($msg,$recordId);
+        }
+        return ['code' => '-1','desc'=>'添加发送记录失败'];
+    }
+
+    /**
+     * 已编辑信息发送
+     *
+     * @param   int     $msgId      已编辑待发送信息记录ID
+     *
+     * @return array
+     *
+     * @throws \yii\db\Exception
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/3/17
+     * @Time: 17:14
+     */
+    public function editedMsgSend($msgId)
+    {
+        $msgInfo = ImMsgRecordEntity::model()->getInfoByRecordId($msgId);
+        if(!empty($msgId))
+        {
+            $msg = new ImTencentMsg($msgInfo['userIdSend'],$msgInfo['userIdReceive'],$msgInfo['msgContent']);
+            $msg->msgType = (int)$msgInfo['msgType'];
+            $msg->msgSync = (int)$msgInfo['msgSync'];
+            return $this->sendUpdateRecord($msg,$msgId);
+        }
+        return ['code' => '-1','desc' => '已编辑待发送信息不存在'];
     }
 
     /**
@@ -99,16 +180,20 @@ class ImTencentMsgService extends ImService
             {
                 //发送成功后会返回发送信息的时间和标识key用于撤回 需要入库做记录
                 //TODO 返回结果入库记录
-                $returnResult = ['code' => '200','desc'=>'信息已发送成功【发送时间：'.$sendResult['result']['msgTime'].',发送记录key为:'.$sendResult['result']['msgKey'].'】'];
+                $returnResult = [
+                    'send' => true,
+                    'desc'=>'信息已发送成功【发送时间：'.date('Y-m-d H:i:s',$sendResult['result']['msgTime']).'】',
+                    'sendKey' => $sendResult['result']['msgKey'],
+                ];
             }
             else
             {
-                $returnResult = ['code' => '201','desc'=>$sendResult['msg']];
+                $returnResult = ['send' => false,'desc'=>$sendResult['msg']];
             }
         }
         else
         {
-            $returnResult = ['code' => '-1','desc'=>$execResult['msg']];
+            $returnResult = ['send' => false,'desc'=>$execResult['msg']];
         }
         return $returnResult;
     }
@@ -145,8 +230,6 @@ class ImTencentMsgService extends ImService
             $sendResult = $execResult['data'];
             if($sendResult['code'] == '200')
             {
-                //发送成功后会返回发送信息的时间和标识key用于撤回 需要入库做记录
-                //TODO 返回结果入库记录
                 $returnResult = ['code' => '200','desc'=>'信息已发送成功【发送记录key为:'.$sendResult['result']['msgKey'].'】'];
             }
             else

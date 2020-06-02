@@ -26,7 +26,7 @@ class FriendsManage extends Tencent
     private function _request($reqestData,$event,$appId,$managerSig)
     {
         $requestUrl = self::REQUEST_URL_MAIN.$event;
-        return $this->_comRequest($requestUrl,$reqestData,$appId,$managerSig);
+        return $this->comRequest($requestUrl,$reqestData,$appId,$managerSig);
     }
 
     /**
@@ -52,11 +52,12 @@ class FriendsManage extends Tencent
         ];
         $info = call_user_func_array($callback,[$this->managerId]);
         $result = $this->_request($addFriendsData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
                 $msg  = 'success';
+                $errno = 0;
                 $result = [
                     'item' => [
                         'desc'  => '批量加好友结果',
@@ -76,11 +77,13 @@ class FriendsManage extends Tencent
             {
                 $code = '201';
                 $msg  = $resultData['ErrorInfo'];
+                $errno = $resultData['ErrorCode'];
                 $result = [];
             }
             return [
                 'code' => $code,
                 'msg'  => $msg,
+                'errno' => $errno,
                 'result' => $result
             ];
         });
@@ -142,7 +145,7 @@ class FriendsManage extends Tencent
             'CheckType'    => $missionData['checkType'] == 1 ? 'CheckResult_Type_Both' : 'CheckResult_Type_Single'
         ];
         $result = $this->_request($checkData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
@@ -193,7 +196,7 @@ class FriendsManage extends Tencent
             'AddFriendItem' => $this->_formatImportFriendsInfo($missionData['friendsInfo'])
         ];
         $result = $this->_request($importData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
@@ -290,7 +293,7 @@ class FriendsManage extends Tencent
             'UpdateItem' => $this->_formatUpdateFriendsInfo($missionData['friendsInfo'])
         ];
         $result = $this->_request($updateData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
@@ -383,22 +386,25 @@ class FriendsManage extends Tencent
             'DeleteType'   => $missionData['deleteType'] == 1 ? 'Delete_Type_Both' : 'Delete_Type_Single'
         ];
         $result = $this->_request($deleteData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function($resultData){
+        return $this->comReturn($result,function($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
                 $msg  = 'success';
+                $errno = 0;
                 $result = $resultData['ResultItem'];
             }
             else
             {
                 $code = '201';
                 $msg  = $resultData['ErrorInfo'];
+                $errno = $resultData['ErrorCode'];
                 $result = [];
             }
             return [
                 'code' => $code,
                 'msg'  => $msg,
+                'errno' => $errno,
                 'result' => $result
             ];
         });
@@ -425,7 +431,7 @@ class FriendsManage extends Tencent
             'DeleteType'   => $missionData['deleteType'] == 1 ? 'Delete_Type_Both' : 'Delete_Type_Single'
         ];
         $result = $this->_request($deleteAllData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
@@ -466,7 +472,7 @@ class FriendsManage extends Tencent
             'CustomSequence' => $missionData['customSequence']
         ];
         $result = $this->_request($pullData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
@@ -518,11 +524,12 @@ class FriendsManage extends Tencent
             'To_Account'   => $missionData['toAccounts']
         ];
         $result = $this->_request($blackListAddData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
                 $msg  = 'success';
+                $errno = 0;
                 $result = [
                     'list' => [
                         'desc' => '添加列表',
@@ -542,11 +549,13 @@ class FriendsManage extends Tencent
             {
                 $code = '201';
                 $msg  = $resultData['ErrorInfo'];
+                $errno = $resultData['ErrorCode'];
                 $result = [];
             }
             return [
                 'code' => $code,
                 'msg'  => $msg,
+                'errno' => $errno,
                 'result' => $result
             ];
         });
@@ -573,11 +582,12 @@ class FriendsManage extends Tencent
             'To_Account'   => $missionData['toAccounts']
         ];
         $result = $this->_request($blackListDeleteData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
                 $msg  = 'success';
+                $errno = 0;
                 $result = [
                     'list' => [
                         'desc' => '删除列表',
@@ -593,11 +603,13 @@ class FriendsManage extends Tencent
             {
                 $code = '201';
                 $msg  = $resultData['ErrorInfo'];
+                $errno = $resultData['ErrorCode'];
                 $result = [];
             }
             return [
                 'code' => $code,
                 'msg'  => $msg,
+                'errno' => $errno,
                 'result' => $result
             ];
         });
@@ -625,7 +637,7 @@ class FriendsManage extends Tencent
             'CheckType'    => $missionData['checkType'] == 1 ? 'BlackCheckResult_Type_Both' : 'BlackCheckResult_Type_Single'
         ];
         $result = $this->_request($blackListCheckData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
@@ -678,7 +690,7 @@ class FriendsManage extends Tencent
             'LastSequence' => $missionData['lastSequence']
         ];
         $result = $this->_request($blackListPullData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';

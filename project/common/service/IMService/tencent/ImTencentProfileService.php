@@ -4,6 +4,7 @@
 namespace common\service\IMService\tencent;
 
 
+use common\entity\im\ImAttentionImportLogEntity;
 use common\service\IM\ImExecutor\IM;
 use common\service\IM\InstantMessaging;
 use common\service\IMService\ImService;
@@ -56,7 +57,7 @@ class ImTencentProfileService extends ImService
             $resultData = $execResult['data'];
             if($resultData['code'] == '200')
             {
-                $returnResult = ['code' => '-1','desc' => $resultData['result']];
+                $returnResult = ['code' => '200','desc' => $resultData['result']];
             }
             else
             {
@@ -87,8 +88,9 @@ class ImTencentProfileService extends ImService
             'image'     => 'http://path/img.png',   选填   头像
             'msgSetting'=> 0,       int     选填  接收消息 Bit0：置0表示接收消息，置1则不接收消息
             'adminForbidType' => 0, int     选填  管理员禁止加好友 ImService::ACCOUNT_ADD_FRIENDS_ADMIN_ALLOW
-
-        ]
+            'customRoom' => '31717891'  string   选填  设置自定义房间号
+            'customOfficial' => '1'     string   选填  设置自定义 是否官方账号
+         ]
      * @return array
      *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
@@ -100,7 +102,7 @@ class ImTencentProfileService extends ImService
         $command = [
             'mission' => IM::TENCENT_MISSION_PROFILE_SET,
             'data' => [
-                'fromAccount' => $fromAccount,
+                'fromAccount' => (string)$fromAccount,
                 'setInfo'     => $setInfo
             ]
         ];
@@ -111,17 +113,44 @@ class ImTencentProfileService extends ImService
             $resultData = $execResult['data'];
             if($resultData['code'] == '200')
             {
-                $returnResult = ['code' => '-1','desc' => '修改成功'];
+                $returnResult = ['code' => '200','desc' => '修改成功'];
             }
             else
             {
-                $returnResult = ['code' => '201','desc' => $resultData['msg']];
+                $returnResult = ['code' => '201','desc' => $resultData['msg'],'errCode'=>$resultData['errno']];
             }
         }
         else
         {
-            $returnResult = ['code' =>  '-1','desc' => $execResult['msg']];
+            $returnResult = ['code' =>  '-1','desc' => $execResult['msg'],'errCode'=> 0];
         }
         return $returnResult;
+    }
+
+    public static $updateProfileKey = 's3DAot4ogpOVgUsW';
+
+    /**
+     * 同步平台用户基本信息到 IM
+     *
+     * @param   array   $userInfo       用户信息
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/5/29
+     * @Time: 13:52
+     */
+    public function updateBasicInfo($userInfo)
+    {
+        $userId = (string)$userInfo['userId'];
+        $toSetInfo = [
+            'nick' => $userInfo['userName'],
+            'image' => STATIC_URL .$userInfo['userHeadImg'],
+            'customRoom' => $userInfo['roomNum'],
+            //'customOfficial' => //TODO 判断是否官方房间
+        ];
+        $result = $this->setProfile($userId,$toSetInfo);
+        if($result['code'] != '200')
+        {
+            ImAttentionImportLogEntity::model()->addFailLog($userId,0,$result['desc'],$result['errCode'],ImAttentionImportLogEntity::POERATION_TYPE_SET_PROFILE);
+        }
     }
 }

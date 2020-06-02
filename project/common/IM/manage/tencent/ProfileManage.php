@@ -25,7 +25,7 @@ class ProfileManage extends Tencent
     private function _request($reqestData,$event,$appId,$managerSig)
     {
         $requestUrl = self::REQUEST_URL_MAIN.$event;
-        return $this->_comRequest($requestUrl,$reqestData,$appId,$managerSig);
+        return $this->comRequest($requestUrl,$reqestData,$appId,$managerSig);
     }
 
     /**
@@ -49,7 +49,7 @@ class ProfileManage extends Tencent
         ];
         $info = call_user_func_array($callback,[$this->managerId]);
         $result = $this->_request($profilePullData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
@@ -103,6 +103,7 @@ class ProfileManage extends Tencent
             'image'     => 'Tag_Profile_IM_Image',
             'msgSetting'=> 'Tag_Profile_IM_MsgSettings',
             'adminForbidType' => 'Tag_Profile_IM_AdminForbidType',
+            'customRoom' => 'Tag_Profile_Custom_room'
         ];
         $tagLists = [];
         foreach ($tags as $tag)
@@ -136,20 +137,23 @@ class ProfileManage extends Tencent
         ];
         $info = call_user_func_array($callback,[$this->managerId]);
         $result = $this->_request($profileSetData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';
                 $msg  = 'success';
+                $errno = 0;
             }
             else
             {
                 $code = '201';
                 $msg  = $resultData['ErrorInfo'];
+                $errno = $resultData['ErrorCode'];
             }
             return [
                 'code' => $code,
-                'msg'  => $msg
+                'msg'  => $msg,
+                'errno' => $errno
             ];
         });
     }
@@ -208,6 +212,14 @@ class ProfileManage extends Tencent
                 'Tag'   => 'Tag_Profile_IM_AdminForbidType',
                 'Value' => ''
             ]*/
+            'customRoom' => [
+                'Tag' => 'Tag_Profile_Custom_room',
+                'Value' => '0'
+            ],
+            'customOfficial' => [
+                'Tag' => 'Tag_Profile_Custom_official',
+                'Value' => ''
+            ]
         ];
         $itemsInfo = [];
         foreach ($setInfo as $name=>$value)

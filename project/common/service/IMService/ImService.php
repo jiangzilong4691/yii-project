@@ -12,31 +12,6 @@ class ImService extends BaseService
     //userSig 过期时间 默认半年
     const USERSIG_EXPIRE_TIME = 15552000;
 
-    //----------------是否将信息同步至From_Account在线终端和漫游上----------------//
-
-    //同步
-    const MSG_SEND_SYNC_YES = 1;
-    //不同步
-    const MSG_SEND_SYNC_NO  = 2;
-
-    //----------------是否将信息同步至From_Account在线终端和漫游上----------------//
-
-    //----------------发送信息类型----------------//
-
-    //文本消息
-    const MSG_TYPE_TEXT = 'text';
-    //表情消息
-    const MSG_TYPE_FACE = 'face';
-    //位置消息
-    const MSG_TYPE_LOCATION = 'location';
-
-    //离线发送：是
-    const MSG_PUSH_OFFLINE_YES = 1;
-    //离线发送：否
-    const MSG_PUSH_OFFLINE_NO  = 0;
-
-    //----------------发送信息类型----------------//
-
     //----------------好友系统----------------//
 
     //加好友：双向

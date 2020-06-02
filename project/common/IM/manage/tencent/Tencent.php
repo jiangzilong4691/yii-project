@@ -25,7 +25,7 @@ class Tencent
      * @Date: 2019/12/24
      * @Time: 10:52
      */
-    protected function _comRequest($requestUrl,$requestData,$appId,$managerSig)
+    protected function comRequest($requestUrl,$requestData,$appId,$managerSig)
     {
         $params = [
             'sdkappid'  => $appId,
@@ -51,7 +51,7 @@ class Tencent
      * @Date: 2019/12/25
      * @Time: 14:57
      */
-    protected function _comReturn($requestResult,callable $callback)
+    protected function comReturn($requestResult,callable $callback)
     {
         if($requestResult['code'] == '200')
         {
@@ -62,7 +62,8 @@ class Tencent
             }
             return [
                 'code' => '-1',
-                'msg'  => '接口数据json解析错误',
+                'msg'  => json_last_error_msg(),
+                'errno' => -2,
                 'result' => []
             ];
         }
@@ -71,6 +72,7 @@ class Tencent
             return [
                 'code' => '-1',
                 'msg'  => $requestResult['msg'],
+                'errno' => -1,
                 'result' => []
             ];
         }

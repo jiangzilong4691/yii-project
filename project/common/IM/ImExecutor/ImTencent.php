@@ -108,7 +108,7 @@ class ImTencent extends IM
         $importData = [
             'Identifier' => (string)$missionData['userInfo']['userId'],
             'Nick' => $missionData['userInfo']['userName'],
-//            'FaceUrl' => $missionData['userInfo']['userHead']
+            'FaceUrl' => STATIC_URL.$missionData['userInfo']['userHeadImg']
         ];
         return $manager->importOne($importData,function ($managerId){
             $managerSig = $this->createUserSig(['userId'=>$managerId]);

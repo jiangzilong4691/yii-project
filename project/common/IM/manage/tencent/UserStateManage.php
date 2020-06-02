@@ -12,7 +12,7 @@ class UserStateManage extends Tencent
     private function _request($requestData,$event,$appId,$managerSig)
     {
         $requestUrl = self::REQUEST_URL_MAIN.$event;
-        return $this->_comRequest($requestUrl,$requestData,$appId,$managerSig);
+        return $this->comRequest($requestUrl,$requestData,$appId,$managerSig);
     }
 
     /**
@@ -56,7 +56,7 @@ class UserStateManage extends Tencent
         $event = 'querystate';
         $info = call_user_func_array($callback,[$this->managerId]);
         $result = $this->_request($checkStateData,$event,$info['appId'],$info['userSig']);
-        return $this->_comReturn($result,function ($resultData){
+        return $this->comReturn($result,function ($resultData){
             if($resultData['ActionStatus'] == 'OK')
             {
                 $code = '200';

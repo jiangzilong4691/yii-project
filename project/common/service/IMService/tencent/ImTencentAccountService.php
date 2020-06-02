@@ -1,6 +1,7 @@
 <?php
 namespace common\service\IMService\tencent;
 
+use common\entity\im\ImAccountImportLogEntity;
 use common\redis\OldCacheRedis;
 use common\service\IM\ImExecutor\IM;
 use common\service\IM\InstantMessaging;
@@ -13,6 +14,9 @@ use common\service\IMService\ImService;
  */
 class ImTencentAccountService extends ImService
 {
+
+    public static $regisSecret = 'qtRZZgiEfdlRZz1l';
+
     /**
      * 获取用户 userSig
      *
@@ -51,10 +55,10 @@ class ImTencentAccountService extends ImService
             }
             else
             {
-                return ['code' => '-1','desc' => new \stdClass()];
+                return [];
             }
         }
-        return ['code' => '200','desc' => $userSigInfo];
+        return $userSigInfo;
     }
 
     /**
@@ -77,16 +81,18 @@ class ImTencentAccountService extends ImService
     /**
      * 单条导入用户
      *
-     * @param   array   $userInfo       用户信息
-     *
+     * @param   array   $userInfo           用户信息
+     * @param   boolean $importFailRetry    是否导入失败后重试
      * @return array
      *
      * @Author: 姜子龙 <jiangzilong@zhibo.tv>
      * @Date: 2019/12/23
      * @Time: 17:26
      */
-    public function accountImportUserOne($userInfo)
+    public function accountImportUserOne($userInfo,$importFailRetry=false)
     {
+        //导入失败计数
+        static $failCount = 0;
         $command = [
             'mission' => IM::TENCENT_MISSION_IMPORT_USER_ONE,
             'data' => [
@@ -104,7 +110,36 @@ class ImTencentAccountService extends ImService
             }
             else
             {
-                $returnResult = ['code' => '201','desc'=> $importResult['msg']];
+                if($importFailRetry)
+                {
+                    if($importResult['errCode'] == 40005)
+                    {
+                        // 40005 为昵称脏词过滤失败 昵称重编辑后导入重试
+                        $failCount ++;
+                        if($failCount > 1)
+                        {
+                            //默认 重试1次  重试失败后直接返回
+                            return [
+                                'code' => '201',
+                                'desc'=> '单条导入失败:'.$importResult['msg'],
+                                'detail'=>[
+                                    'errCode' => $importResult['errCode'],
+                                    'msg' => $importResult['msg']
+                                ]
+                            ];
+                        }
+                        $userInfo['userName'] = 'zhibo'.$userInfo['roomNum'];
+                        return $this->accountImportUserOne($userInfo,$importFailRetry);
+                    }
+                }
+                $returnResult = [
+                    'code' => '201',
+                    'desc'=> '单条导入失败:'.$importResult['msg'],
+                    'detail'=>[
+                        'errCode' => $importResult['errCode'],
+                        'msg' => $importResult['msg']
+                    ]
+                ];
             }
         }
         else
@@ -209,6 +244,7 @@ class ImTencentAccountService extends ImService
     /**
      * 批量删除用户：（注：帐号删除时，该用户的关系链、资料等数据也会被删除。）
      * 帐号删除后，该用户的数据将无法恢复，请谨慎使用该接口
+     *
      * @param array $userIds
      *
      * @return array
@@ -297,5 +333,82 @@ class ImTencentAccountService extends ImService
             $returnResult = ['code'=>'-1','desc'=> $execResult['msg']];
         }
         return $returnResult;
+    }
+
+    /**
+     * 导入账号并设置平台用户资料
+     *
+     * @param   array       $userInfo   平台用户信息
+     * @param   boolean     $addLog     是否加入导入日志
+     *
+     * @return array
+     * @throws
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/3/23
+     * @Time: 13:33
+     */
+    public function importAndSetProfile($userInfo,$addLog=false)
+    {
+        $importResult = $this->accountImportUserOne($userInfo,true);
+        if($importResult['code'] == '200')
+        {
+            $toSetProfileInfo = [
+                'customRoom' => (string)$userInfo['roomNum'],
+            ];
+            $setProfileResult = ImTencentProfileService::self()->setProfile($userInfo['userId'],$toSetProfileInfo);
+            if($setProfileResult['code'] == '200')
+            {
+                $result = ['code' => '200','desc' => '账号正常导入，资料设置正常'];
+            }
+            else
+            {
+                $result = ['code' => '201','desc' => '账号正常导入，资料设置异常：'.$setProfileResult['desc']];
+            }
+        }
+        else
+        {
+            $result = ['code' => '-1','desc'=>'账号导入异常：'.$importResult['desc']];
+        }
+        if($addLog)
+        {
+            $statusMap = [
+                '-1' => ImAccountImportLogEntity::IMPORT_STATUS_FAIL ,
+                '201' => ImAccountImportLogEntity::IMPORT_STATUS_UPDATE_FAIL ,
+                '200' => ImAccountImportLogEntity::IMPORT_STATUS_SUCCESS
+            ];
+            ImAccountImportLogEntity::model()->addLog(
+                (int)$userInfo['userId'],
+                ImAccountImportLogEntity::SERVICE_OBJECT_TENCENT,
+                isset($statusMap[$result['code']])?$statusMap[$result['code']] : 0,
+                $result['code'] == '200' ? '': $result['desc']
+            );
+        }
+        return $result;
+    }
+
+    /**
+     * 注册行为 导入注册用户
+     *
+     * @param $userId
+     * @param $userName
+     * @param $roomNum
+     *
+     * @Author: 姜子龙 <jiangzilong@zhibo.tv>
+     * @Date: 2020/5/15
+     * @Time: 18:27
+     */
+    public function registerAccountImport($userId,$userName,$roomNum)
+    {
+        try{
+            $ImUserImportInfo = [
+                'userId' => $userId,
+                'userName' => $userName,
+                'userHeadImg' => '/images/video_user.png',  //新注册用户 使用默认头像
+                'roomNum' => $roomNum
+            ];
+            ImTencentAccountService::self()->importAndSetProfile($ImUserImportInfo,true);
+        }catch (\Exception $e){
+
+        }
     }
 }
