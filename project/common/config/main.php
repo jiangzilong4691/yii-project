@@ -17,6 +17,8 @@ return [
                     'database' => 0,
                     'password' => ''
                 ],
+                'enableReplicas' => true,
+                'replicas' => [],
                 'keyPrefix' => 'cache:',
             ],
         //本地缓存：存储本地非状态数据
